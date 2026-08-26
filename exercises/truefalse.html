@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Smash It! - True or False</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;touch-action:manipulation}
+body{font-family:'Fredoka',sans-serif;background:#0a2f6a;color:#2d1b0e}
+
+/* ===== SCENE ===== */
+.scene{position:fixed;inset:0;z-index:0;overflow:hidden;
+  background:linear-gradient(180deg,#0b3d91 0%,#1a6fd4 28%,#4aa8ef 52%,#9ed4f8 68%,#c8ebc0 68.2%,#7ec45a 82%,#4a9a3a 100%)}
+
+.sky{position:absolute;top:0;left:0;right:0;height:68%;pointer-events:none}
+.sun{position:absolute;top:4%;right:7%;width:clamp(70px,9vw,110px);height:clamp(70px,9vw,110px);border-radius:50%;
+  background:radial-gradient(circle at 35% 32%,#fff9d0 0%,#ffe566 28%,#ffb400 58%,#f08a00 100%);
+  box-shadow:0 0 40px 18px rgba(255,200,60,.35),0 0 90px 40px rgba(255,170,40,.18);animation:sunPulse 5s ease-in-out infinite alternate}
+@keyframes sunPulse{from{transform:scale(1)}to{transform:scale(1.05)}}
+
+.ray{position:absolute;top:8%;right:9%;width:2px;height:40px;background:linear-gradient(180deg,rgba(255,220,100,.5),transparent);
+  transform-origin:top center;opacity:.45}
+.ray:nth-child(1){transform:rotate(-25deg)}.ray:nth-child(2){transform:rotate(0deg)}.ray:nth-child(3){transform:rotate(25deg)}
+
+.cloud{position:absolute;background:#fff;border-radius:999px;opacity:.92;filter:drop-shadow(0 4px 8px rgba(0,0,0,.08));animation:drift linear infinite}
+.cloud::before,.cloud::after{content:"";position:absolute;background:#fff;border-radius:50%}
+.cloud.a{width:90px;height:34px;top:8%;left:-120px;animation-duration:28s}
+.cloud.a::before{width:42px;height:42px;top:-22px;left:14px}
+.cloud.a::after{width:52px;height:52px;top:-28px;left:38px}
+.cloud.b{width:70px;height:26px;top:16%;left:-100px;animation-duration:36s;animation-delay:8s;opacity:.8}
+.cloud.b::before{width:34px;height:34px;top:-18px;left:10px}
+.cloud.b::after{width:40px;height:40px;top:-22px;left:30px}
+.cloud.c{width:110px;height:38px;top:11%;left:-140px;animation-duration:42s;animation-delay:16s;opacity:.75}
+.cloud.c::before{width:48px;height:48px;top:-24px;left:18px}
+.cloud.c::after{width:56px;height:56px;top:-30px;left:48px}
+@keyframes drift{from{transform:translateX(0)}to{transform:translateX(calc(100vw + 200px))}}
+
+.hills{position:absolute;left:0;right:0;bottom:32%;height:28%;pointer-events:none}
+.hill{position:absolute;bottom:0;border-radius:50% 50% 0 0;filter:drop-shadow(0 -2px 6px rgba(0,0,0,.12))}
+.hill.far{left:-8%;width:55%;height:85%;background:linear-gradient(180deg,#3d8f4a,#2f7a3c)}
+.hill.mid{left:28%;width:50%;height:100%;background:linear-gradient(180deg,#4ca85a,#348a42)}
+.hill.near{right:-10%;width:48%;height:78%;background:linear-gradient(180deg,#57b866,#3d9448)}
+
+.ground{position:absolute;left:0;right:0;bottom:0;height:32%;
+  background:
+    radial-gradient(ellipse 20% 40% at 15% 30%,rgba(255,255,255,.08),transparent),
+    radial-gradient(ellipse 18% 35% at 70% 40%,rgba(255,255,255,.06),transparent),
+    linear-gradient(180deg,#6ecf55 0%,#52b844 18%,#3f9e35 45%,#2f7f28 75%,#246820 100%);
+  overflow:hidden}
+.ground::before{content:"";position:absolute;top:0;left:0;right:0;height:14px;
+  background:repeating-linear-gradient(90deg,#4aa838 0 18px,#5bc048 18px 36px);opacity:.55;border-radius:0 0 40% 40%}
+.blade{position:absolute;bottom:78%;width:3px;height:14px;background:#3a9a32;border-radius:2px 2px 0 0;opacity:.55}
+.blade:nth-child(odd){height:18px;transform:rotate(-8deg)}.blade:nth-child(3n){transform:rotate(10deg);height:12px}
+
+.sparkle{position:absolute;width:6px;height:6px;background:#fff;border-radius:50%;opacity:0;animation:twinkle 3s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:0;transform:scale(.4)}40%{opacity:.9;transform:scale(1)}70%{opacity:.2}}
+
+/* ===== HUD ===== */
+.hud{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
+  padding:6px 14px;background:linear-gradient(180deg,rgba(45,22,5,.94),rgba(70,35,8,.9));
+  border-bottom:2px solid #c9a24a;box-shadow:0 4px 16px rgba(0,0,0,.45)}
+.hs{display:flex;align-items:center;gap:7px}
+.hb,.hsd{width:36px;height:36px;border-radius:50%;border:2px solid #ffd54f;color:#fff;font-size:16px;font-weight:900;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:transform .15s}
+.hb{background:linear-gradient(145deg,#ef5350,#c62828);box-shadow:0 3px 0 #8e1b1b}
+.hsd{background:linear-gradient(145deg,#ffb300,#ef6c00);box-shadow:0 3px 0 #b34d00}
+.hb:hover,.hsd:hover{transform:translateY(-2px)}
+.hc{display:flex;align-items:center;gap:4px;padding:5px 12px;border-radius:14px;
+  background:rgba(255,255,255,.08);border:1.5px solid rgba(255,213,79,.25);color:#fff;font-size:14px;font-weight:700}
+.hts{display:flex;gap:3px}.ht{font-size:17px;transition:.3s}.ht.lost{filter:grayscale(1) opacity(.35);transform:scale(.7)}
+
+/* ===== TITLE + QUESTION ===== */
+.title-wrap{position:fixed;top:48px;left:50%;transform:translateX(-50%);z-index:40;text-align:center;pointer-events:none}
+.title-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 22px;border-radius:999px;
+  background:linear-gradient(145deg,#6d3a12,#4a250a);border:2px solid #e0b24a;
+  box-shadow:0 5px 0 #2a1405,0 8px 18px rgba(0,0,0,.35);color:#ffe082;font-weight:700;
+  font-size:clamp(15px,2.4vw,22px);letter-spacing:1px;text-shadow:0 2px 0 rgba(0,0,0,.35)}
+
+.qbox{position:fixed;top:96px;left:50%;transform:translateX(-50%);z-index:40;width:min(92vw,680px)}
+.qbox-inner{background:linear-gradient(160deg,#fffaf0,#ffe8b8 55%,#f5d79a);
+  border:3px solid #e0a83a;border-radius:22px;padding:14px 22px;text-align:center;
+  box-shadow:0 10px 28px rgba(0,0,0,.28),inset 0 2px 0 rgba(255,255,255,.75);position:relative}
+.qbox-inner::before{content:"";position:absolute;inset:5px;border:2px dashed rgba(200,140,40,.25);border-radius:16px;pointer-events:none}
+.qtxt{font-size:clamp(16px,2.5vw,26px);font-weight:700;color:#3a2412;line-height:1.4;position:relative}
+
+.instruction{position:fixed;top:172px;left:50%;transform:translateX(-50%);z-index:40;
+  padding:5px 16px;border-radius:999px;background:rgba(20,50,20,.45);backdrop-filter:blur(4px);
+  color:#fff;font-size:clamp(12px,1.6vw,15px);font-weight:700;white-space:nowrap;
+  text-shadow:0 2px 4px rgba(0,0,0,.4);animation:nudge 2s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-3px)}}
+
+/* ===== STONES ===== */
+.stones{position:fixed;bottom:14%;left:50%;transform:translateX(-50%);z-index:30;
+  display:flex;gap:clamp(36px,10vw,120px);align-items:flex-end}
+.stone{cursor:pointer;position:relative;text-align:center;transition:transform .18s cubic-bezier(.34,1.4,.64,1);
+  -webkit-tap-highlight-color:transparent;user-select:none}
+.stone:hover:not(.broke):not(.dim){transform:translateY(-8px) scale(1.04)}
+.stone:active:not(.broke){transform:scale(.96)}
+.stone.dim{opacity:.28;pointer-events:none;filter:grayscale(.4);transform:scale(.9)}
+.stone.broke{pointer-events:none}
+
+.stone-body{width:clamp(130px,20vw,200px);height:clamp(110px,17vw,170px);position:relative;
+  filter:drop-shadow(0 10px 16px rgba(0,0,0,.35))}
+.stone-body svg{width:100%;height:100%;display:block}
+.stone-face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;z-index:2;pointer-events:none}
+.stone-icon{font-size:clamp(22px,3.4vw,34px);filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));line-height:1}
+.stone-label{font-family:'Nunito',sans-serif;font-size:clamp(20px,3.6vw,34px);font-weight:900;color:#fff;
+  letter-spacing:2px;text-shadow:0 3px 0 rgba(0,0,0,.25),0 6px 12px rgba(0,0,0,.35)}
+.stone-glow{position:absolute;inset:-8%;border-radius:40%;opacity:0;pointer-events:none;transition:opacity .25s;
+  background:radial-gradient(circle,rgba(255,255,255,.35),transparent 65%)}
+.stone:hover:not(.broke) .stone-glow{opacity:1}
+.stone.true .stone-glow{background:radial-gradient(circle,rgba(120,255,140,.4),transparent 65%)}
+.stone.false .stone-glow{background:radial-gradient(circle,rgba(255,120,120,.4),transparent 65%)}
+
+.stone-crack{position:absolute;inset:0;opacity:0;pointer-events:none;z-index:3}
+.stone.cracking .stone-crack{opacity:1;animation:crackFlash .18s ease-out}
+@keyframes crackFlash{0%{opacity:0}40%{opacity:1}100%{opacity:1}}
+
+.stone.smash-hit{animation:stoneHit .28s ease-out}
+@keyframes stoneHit{
+  0%{transform:scale(1) rotate(0)}
+  35%{transform:scale(1.08) rotate(-3deg)}
+  70%{transform:scale(.92) rotate(2deg)}
+  100%{transform:scale(1) rotate(0)}
+}
+.stone.shatter{animation:stoneShatter .55s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes stoneShatter{
+  0%{transform:scale(1);opacity:1;filter:brightness(1)}
+  25%{transform:scale(1.12);filter:brightness(1.4)}
+  100%{transform:scale(.2) rotate(18deg);opacity:0;filter:brightness(2)}
+}
+
+/* floating idle */
+.stone.true{animation:floatL 3.2s ease-in-out infinite}
+.stone.false{animation:floatR 3.4s ease-in-out infinite .4s}
+@keyframes floatL{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes floatR{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.stone:hover,.stone.smash-hit,.stone.shatter,.stone.dim,.stone.broke{animation:none}
+
+/* ===== HAMMER ===== */
+.hero{position:fixed;bottom:10%;left:6%;z-index:42;width:clamp(120px,16vw,170px);height:clamp(120px,16vw,170px);
+  pointer-events:none;transition:left .38s cubic-bezier(.22,.9,.3,1),bottom .38s cubic-bezier(.22,.9,.3,1);
+  filter:drop-shadow(0 10px 16px rgba(0,0,0,.35));overflow:visible}
+.hero-boy{display:none!important}
+/*
+  Natural PNG: metal HEAD = top-right, stick = bottom-left.
+  Keep near-natural angle so the HEAD stays on-screen and is the strike point.
+*/
+.hero-hammer{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;
+  transform-origin:70% 25%; /* pivot near metal head */
+  transform:rotate(0deg);pointer-events:none;
+  filter:drop-shadow(0 6px 10px rgba(0,0,0,.45));animation:hamBob 2.4s ease-in-out infinite}
+.hero.attacking .hero-hammer{animation:none;transform:rotate(-18deg) translate(-8px,-28px)}
+.hero.swinging .hero-hammer{animation:hammerStrike .36s cubic-bezier(.2,.85,.2,1) forwards}
+@keyframes hamBob{
+  0%,100%{transform:rotate(0deg) translateY(0)}
+  50%{transform:rotate(6deg) translateY(-8px)}
+}
+/* Raise then slam — metal HEAD (top-right) drives into the stone */
+@keyframes hammerStrike{
+  0%{transform:rotate(-22deg) translate(-10px,-32px) scale(1)}
+  48%{transform:rotate(12deg) translate(6px,14px) scale(1.1)}
+  65%{transform:rotate(4deg) translate(0,4px) scale(1)}
+  100%{transform:rotate(0deg) translate(0,0) scale(1)}
+}
+.hero.cheer .hero-hammer{animation:hamCheer .5s ease-out}
+@keyframes hamCheer{
+  0%,100%{transform:rotate(0) scale(1)}
+  40%{transform:rotate(-20deg) scale(1.12) translateY(-14px)}
+  70%{transform:rotate(8deg) scale(1.05)}
+}
+
+/* ===== FX ===== */
+.shard{position:fixed;z-index:50;pointer-events:none;border-radius:3px 8px 4px 6px;
+  animation:shardFly .85s cubic-bezier(.15,.75,.3,1) forwards}
+@keyframes shardFly{
+  0%{transform:translate(0,0) rotate(0) scale(1);opacity:1}
+  100%{transform:translate(var(--dx),var(--dy)) rotate(var(--rot)) scale(.4);opacity:0}
+}
+.dust{position:fixed;z-index:48;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(210,180,120,.55),rgba(160,130,80,.15) 55%,transparent 70%);
+  animation:dustPop .7s ease-out forwards}
+@keyframes dustPop{0%{transform:scale(.2);opacity:.8}100%{transform:scale(2.8);opacity:0}}
+.shock{position:fixed;z-index:47;border:3px solid rgba(255,255,255,.7);border-radius:50%;pointer-events:none;
+  animation:shockwave .5s ease-out forwards}
+@keyframes shockwave{0%{transform:translate(-50%,-50%) scale(.2);opacity:.9}100%{transform:translate(-50%,-50%) scale(2.4);opacity:0}}
+.spark{position:fixed;z-index:52;width:8px;height:8px;border-radius:50%;background:#ffe566;pointer-events:none;
+  box-shadow:0 0 10px #ffb300;animation:sparkOut .55s ease-out forwards}
+@keyframes sparkOut{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
+
+.scene-shake{animation:sceneShake .45s ease-in-out}
+@keyframes sceneShake{
+  0%,100%{transform:translate(0,0)}
+  20%{transform:translate(-6px,3px)}
+  40%{transform:translate(7px,-2px)}
+  60%{transform:translate(-4px,2px)}
+  80%{transform:translate(3px,-1px)}
+}
+
+/* ===== FEEDBACK ===== */
+.fb{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;
+  background:rgba(20,10,0,.25);backdrop-filter:blur(2px);transition:.3s}
+.fb.show{opacity:1;visibility:visible}
+.fb-c{min-width:270px;max-width:90vw;padding:26px 28px;text-align:center;border-radius:24px;
+  background:linear-gradient(160deg,#fffef8,#fff3d6);box-shadow:0 22px 50px rgba(0,0,0,.35);transform:scale(.5);transition:.35s cubic-bezier(.34,1.4,.64,1)}
+.fb.show .fb-c{transform:scale(1)}
+.fb-e{font-size:64px;line-height:1}.fb-t{margin:8px 0 4px;font-size:26px;font-weight:700}
+.fb-x{color:#6a5240;font-size:14px;font-weight:600}
+.fb.ok .fb-c{border:3px solid #2e9e4a}.fb.ok .fb-t{color:#1b7a32}
+.fb.no .fb-c{border:3px solid #e05a5a}.fb.no .fb-t{color:#c0392b}
+.fb.fn .fb-c{border:4px solid #ffd54f}.fb.fn .fb-e{font-size:76px;animation:fE .7s ease-in-out infinite alternate}
+.fb.fn .fb-t{font-size:30px;color:#3a2412}
+@keyframes fE{from{transform:scale(1)}to{transform:scale(1.12) rotate(4deg)}}
+.pa{display:none;margin-top:12px;min-width:150px;padding:12px 22px;border:0;border-radius:14px;
+  background:linear-gradient(145deg,#ff8a50,#e85a20);color:#fff;font-family:'Fredoka',sans-serif;
+  font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 5px 0 #b43a10;transition:transform .15s}
+.pa:hover{transform:translateY(-2px)}
+
+.cft{position:fixed;z-index:300;top:-14px;width:8px;height:13px;border-radius:2px;animation:cF 1.6s linear forwards}
+@keyframes cF{to{transform:translate(var(--x),100vh) rotate(720deg);opacity:0}}
+
+@media(max-width:768px){
+  .stones{gap:clamp(20px,7vw,50px);bottom:12%}
+  .stone-body{width:clamp(110px,28vw,150px);height:clamp(95px,24vw,130px)}
+  .qbox{top:90px}.instruction{top:158px}
+  .title-wrap{top:46px}
+  .hero{width:110px;height:110px;bottom:8%;left:4%}
+  .hb,.hsd{width:32px;height:32px;font-size:14px}
+}
+@media(max-width:480px){
+  .qtxt{font-size:14px}.stone-label{font-size:16px;letter-spacing:1px}
+  .hts .ht:nth-child(3){display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="scene" id="scene">
+  <div class="sky">
+    <div class="sun"></div>
+    <div class="ray" style="right:11%"></div>
+    <div class="ray" style="right:8%"></div>
+    <div class="ray" style="right:5%"></div>
+    <div class="cloud a"></div>
+    <div class="cloud b"></div>
+    <div class="cloud c"></div>
+    <div class="sparkle" style="top:12%;left:18%;animation-delay:.2s"></div>
+    <div class="sparkle" style="top:22%;left:62%;animation-delay:1.1s"></div>
+    <div class="sparkle" style="top:8%;left:44%;animation-delay:2s"></div>
+  </div>
+  <div class="hills">
+    <div class="hill far"></div>
+    <div class="hill mid"></div>
+    <div class="hill near"></div>
+  </div>
+  <div class="ground" id="ground">
+    <!-- grass blades injected -->
+  </div>
+</div>
+
+<div class="hud">
+  <div class="hs"><a class="hb" href="../EVS_Index.html" title="Menu">&larr;</a></div>
+  <div class="hs">
+    <div class="hc"><span>⭐</span><span id="sD">0</span></div>
+    <div class="hc"><span>🔥</span><span id="cD">x0</span></div>
+    <div class="hc"><span>❓</span><span id="qD">1/5</span></div>
+  </div>
+  <div class="hs">
+    <div class="hts" id="hC"><span class="ht">❤️</span><span class="ht">❤️</span><span class="ht">❤️</span></div>
+    <button class="hsd" id="sndB" type="button">🔊</button>
+  </div>
+</div>
+
+<div class="title-wrap"><div class="title-badge">🔨 Smash It!</div></div>
+
+<div class="qbox"><div class="qbox-inner"><div class="qtxt" id="qS"></div></div></div>
+<div class="instruction" id="instEl">Smash the correct stone!</div>
+
+<div class="stones" id="stonesEl">
+  <div class="stone true" id="stoneT" role="button" tabindex="0" aria-label="True">
+    <div class="stone-glow"></div>
+    <div class="stone-body">
+      <svg viewBox="0 0 200 170" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="tg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#8fd96a"/>
+            <stop offset="40%" stop-color="#4cb84a"/>
+            <stop offset="100%" stop-color="#2e8a35"/>
+          </linearGradient>
+          <linearGradient id="tg2" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="rgba(255,255,255,.35)"/>
+            <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+          </linearGradient>
+        </defs>
+        <ellipse cx="100" cy="158" rx="72" ry="10" fill="rgba(0,0,0,.18)"/>
+        <path d="M28,48 C22,78 18,110 34,138 C48,158 78,164 102,162 C138,160 168,150 178,124 C188,96 182,62 160,42 C138,22 98,18 68,26 C48,32 32,38 28,48Z" fill="url(#tg)" stroke="#1f6b28" stroke-width="3"/>
+        <path d="M48,40 C70,28 110,26 140,36 C118,34 84,38 58,50Z" fill="url(#tg2)"/>
+        <path d="M55,70 Q72,62 88,74" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="4" stroke-linecap="round"/>
+        <path d="M110,88 Q130,80 148,96" fill="none" stroke="rgba(0,0,0,.1)" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="62" cy="100" r="7" fill="rgba(0,0,0,.08)"/>
+        <circle cx="145" cy="118" r="5" fill="rgba(0,0,0,.07)"/>
+      </svg>
+      <svg class="stone-crack" viewBox="0 0 200 170">
+        <path d="M100,30 L92,70 L110,95 L88,130 L105,155" fill="none" stroke="#1a3d1a" stroke-width="3" stroke-linecap="round"/>
+        <path d="M92,70 L70,85" fill="none" stroke="#1a3d1a" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M110,95 L135,105" fill="none" stroke="#1a3d1a" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <div class="stone-face">
+        <div class="stone-icon">✅</div>
+        <div class="stone-label">TRUE</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stone false" id="stoneF" role="button" tabindex="0" aria-label="False">
+    <div class="stone-glow"></div>
+    <div class="stone-body">
+      <svg viewBox="0 0 200 170" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="fg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#e88080"/>
+            <stop offset="40%" stop-color="#d04a4a"/>
+            <stop offset="100%" stop-color="#9a2c2c"/>
+          </linearGradient>
+          <linearGradient id="fg2" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="rgba(255,255,255,.3)"/>
+            <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+          </linearGradient>
+        </defs>
+        <ellipse cx="100" cy="158" rx="72" ry="10" fill="rgba(0,0,0,.18)"/>
+        <path d="M32,52 C24,80 20,112 38,138 C54,158 84,165 108,162 C144,158 172,146 180,118 C190,88 176,56 152,40 C126,22 90,20 64,30 C48,36 36,44 32,52Z" fill="url(#fg)" stroke="#6b1c1c" stroke-width="3"/>
+        <path d="M50,42 C78,28 118,28 148,40 C120,34 86,38 60,52Z" fill="url(#fg2)"/>
+        <path d="M58,78 Q78,68 96,82" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="4" stroke-linecap="round"/>
+        <path d="M112,92 Q132,84 150,100" fill="none" stroke="rgba(0,0,0,.12)" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="70" cy="112" r="6" fill="rgba(0,0,0,.08)"/>
+        <circle cx="140" cy="70" r="5" fill="rgba(0,0,0,.07)"/>
+      </svg>
+      <svg class="stone-crack" viewBox="0 0 200 170">
+        <path d="M102,28 L96,68 L118,92 L90,128 L108,156" fill="none" stroke="#4a1010" stroke-width="3" stroke-linecap="round"/>
+        <path d="M96,68 L72,82" fill="none" stroke="#4a1010" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M118,92 L142,100" fill="none" stroke="#4a1010" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <div class="stone-face">
+        <div class="stone-icon">❌</div>
+        <div class="stone-label">FALSE</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="hero" id="hero">
+  <img class="hero-hammer" src="../assets/images/hammer-removebg-preview.png" alt="Hammer">
+</div>
+
+<div class="fb" id="fb"><div class="fb-c">
+  <div class="fb-e" id="fE"></div>
+  <h2 class="fb-t" id="fT"></h2>
+  <p class="fb-x" id="fX"></p>
+  <button class="pa" id="pA" type="button">🔄 Play Again</button>
+</div></div>
+
+<script>
+(function(){
+  var quiz=[
+    {s:"Our eyes help us listen.",a:false},
+    {s:"Each hand has ten fingers.",a:false},
+    {s:"We can see the world with our limbs.",a:false},
+    {s:"Our legs help us eat and pick things.",a:false},
+    {s:"Our skin helps us feel.",a:true}
+  ];
+
+  var cQ=0,score=0,combo=0,hearts=3,locked=false,sndOn=true;
+  var qS=document.getElementById("qS"),sD=document.getElementById("sD"),cD=document.getElementById("cD");
+  var qD=document.getElementById("qD"),hC=document.getElementById("hC"),fb=document.getElementById("fb");
+  var fE=document.getElementById("fE"),fT=document.getElementById("fT"),fX=document.getElementById("fX");
+  var pA=document.getElementById("pA"),sndB=document.getElementById("sndB");
+  var hero=document.getElementById("hero"),instEl=document.getElementById("instEl");
+  var stoneT=document.getElementById("stoneT"),stoneF=document.getElementById("stoneF");
+  var scene=document.getElementById("scene");
+  var ground=document.getElementById("ground");
+  var heroHome={left:"6%",bottom:"10%"};
+
+  for(var i=0;i<28;i++){
+    var b=document.createElement("div");
+    b.className="blade";
+    b.style.left=(3+i*3.4)+"%";
+    b.style.bottom=(72+Math.random()*18)+"%";
+    ground.appendChild(b);
+  }
+
+  var actx=null;
+  function eA(){if(!actx){try{actx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){actx=null}}if(actx&&actx.state==="suspended")actx.resume()}
+  function tn(f,s,d,t,p){if(!actx||!sndOn)return;t=t||"sine";p=p||.12;var o=actx.createOscillator(),g=actx.createGain();o.type=t;o.frequency.setValueAtTime(f,actx.currentTime+s);g.gain.setValueAtTime(0,actx.currentTime+s);g.gain.linearRampToValueAtTime(p,actx.currentTime+s+.02);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+s+d);o.connect(g);g.connect(actx.destination);o.start(actx.currentTime+s);o.stop(actx.currentTime+s+d+.03)}
+  function pC(){tn(523,0,.1);tn(659,.08,.12);tn(784,.16,.15)}
+  function pW(){tn(250,0,.12,"sawtooth",.08);tn(180,.08,.15,"sawtooth",.06)}
+  function pB(){tn(660,0,.08,"triangle",.1);tn(880,.06,.1,"triangle",.1)}
+  function pF(){[392,523,659,784,1047].forEach(function(f,i){tn(f,i*.1,.18,"triangle",.12)})}
+  function pS(){tn(110,0,.07,"sawtooth",.16);tn(70,.04,.12,"sawtooth",.12);tn(40,.08,.18,"square",.07)}
+  function spk(t){if(!sndOn||!("speechSynthesis" in window))return;try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.rate=.95;u.pitch=1.05;speechSynthesis.speak(u)}catch(e){}}
+
+  function conf(n){
+    var cs=["#ff4d6d","#ffd43b","#31c76a","#4da3ff","#a85ee8","#ff8c42"];
+    for(var i=0;i<n;i++){
+      var p=document.createElement("div");p.className="cft";
+      p.style.left=Math.random()*100+"vw";p.style.background=cs[Math.floor(Math.random()*cs.length)];
+      p.style.setProperty("--x",(Math.random()*400-200)+"px");p.style.animationDelay=Math.random()*.25+"s";
+      document.body.appendChild(p);setTimeout(function(el){return function(){el.remove()}}(p),1800);
+    }
+  }
+
+  function smashFX(x,y,isTrue){
+    var colors=isTrue?["#6ecf55","#3ea640","#a8e080","#2e7d32","#c8f0a8"]:["#e57373","#c62828","#ef9a9a","#8e2424","#ffcdd2"];
+    var i,el;
+    for(i=0;i<18;i++){
+      el=document.createElement("div");el.className="shard";
+      el.style.left=x+"px";el.style.top=y+"px";
+      el.style.background=colors[Math.floor(Math.random()*colors.length)];
+      el.style.width=(8+Math.random()*16)+"px";el.style.height=(7+Math.random()*14)+"px";
+      el.style.setProperty("--dx",(Math.random()*220-110)+"px");
+      el.style.setProperty("--dy",(-40-Math.random()*160)+"px");
+      el.style.setProperty("--rot",(Math.random()*520-260)+"deg");
+      el.style.animationDelay=(Math.random()*0.08)+"s";
+      document.body.appendChild(el);setTimeout(function(n){return function(){n.remove()}}(el),900);
+    }
+    for(i=0;i<5;i++){
+      el=document.createElement("div");el.className="dust";
+      el.style.left=(x-25+Math.random()*50)+"px";el.style.top=(y-15+Math.random()*30)+"px";
+      el.style.width=(40+Math.random()*50)+"px";el.style.height=(28+Math.random()*35)+"px";
+      document.body.appendChild(el);setTimeout(function(n){return function(){n.remove()}}(el),750);
+    }
+    el=document.createElement("div");el.className="shock";
+    el.style.left=x+"px";el.style.top=y+"px";el.style.width="40px";el.style.height="40px";
+    document.body.appendChild(el);setTimeout(function(){el.remove()},520);
+    for(i=0;i<10;i++){
+      el=document.createElement("div");el.className="spark";
+      el.style.left=x+"px";el.style.top=y+"px";
+      el.style.setProperty("--dx",(Math.random()*120-60)+"px");
+      el.style.setProperty("--dy",(Math.random()*120-60)+"px");
+      document.body.appendChild(el);setTimeout(function(n){return function(){n.remove()}}(el),600);
+    }
+    scene.classList.remove("scene-shake");void scene.offsetWidth;scene.classList.add("scene-shake");
+    setTimeout(function(){scene.classList.remove("scene-shake")},500);
+  }
+
+  function resetHero(){
+    hero.classList.remove("attacking","swinging","cheer");
+    hero.style.left=heroHome.left;
+    hero.style.bottom=heroHome.bottom;
+    hero.style.transform="";
+  }
+
+  function heroSmash(stoneEl,done){
+    var r=stoneEl.getBoundingClientRect();
+    var hw=hero.offsetWidth||150;
+    var hh=hero.offsetHeight||150;
+    /*
+      Natural PNG: metal HEAD is top-right (~72% x, ~28% y).
+      Place that hotspot on the stone so the HEAD hits, not the stick.
+    */
+    var headX=0.72;
+    var headY=0.28;
+    var contactX=r.left+r.width*0.5;
+    var contactY=r.top+r.height*0.32;
+    var targetLeft=Math.round(contactX-hw*headX);
+    var targetBottom=Math.round(window.innerHeight-contactY-hh*(1-headY));
+    targetLeft=Math.max(8,Math.min(targetLeft,window.innerWidth-hw-8));
+    targetBottom=Math.max(10,Math.min(targetBottom,window.innerHeight*0.55));
+
+    hero.classList.remove("cheer","swinging");
+    hero.classList.add("attacking");
+    hero.style.left=targetLeft+"px";
+    hero.style.bottom=targetBottom+"px";
+
+    setTimeout(function(){
+      hero.classList.add("swinging");
+      setTimeout(function(){
+        if(done)done();
+        setTimeout(function(){
+          hero.classList.remove("swinging","attacking");
+          hero.style.left=heroHome.left;
+          hero.style.bottom=heroHome.bottom;
+        },280);
+      },175);
+    },380);
+  }
+
+  function resetStones(){
+    [stoneT,stoneF].forEach(function(s){
+      s.classList.remove("broke","dim","cracking","smash-hit","shatter");
+      s.style.opacity="";s.style.transform="";s.style.pointerEvents="";
+    });
+    resetHero();
+  }
+
+  function loadQ(){
+    if(cQ>=quiz.length){showFin();return}
+    locked=false;resetStones();
+    var q=quiz[cQ];
+    qS.textContent=q.s;
+    qD.textContent=(cQ+1)+"/"+quiz.length;
+    sD.textContent=score;cD.textContent="x"+combo;
+    instEl.textContent="Smash the correct stone!";
+  }
+
+  function pickStone(ans){
+    if(locked)return;
+    eA();locked=true;
+    var q=quiz[cQ],correct=ans===q.a;
+    var chosen=ans?stoneT:stoneF;
+    var other=ans?stoneF:stoneT;
+    var r=chosen.getBoundingClientRect();
+    var cx=r.left+r.width/2, cy=r.top+r.height/2;
+
+    heroSmash(chosen,function(){
+      pS();
+      chosen.classList.add("cracking","smash-hit");
+      smashFX(cx,cy,ans);
+
+      setTimeout(function(){
+        chosen.classList.add("shatter","broke");
+        if(correct){
+          other.classList.add("dim");
+          combo++;score+=12+combo*3;sD.textContent=score;cD.textContent="x"+combo;
+          pC();conf(28);
+          hero.classList.remove("cheer");void hero.offsetWidth;hero.classList.add("cheer");
+          sFB("ok","🎉","Correct!","Awesome smash!");
+          spk("Correct!");
+          if(combo>=2){pB();showBn("COMBO x"+combo+"!")}
+          setTimeout(function(){fb.classList.remove("show");cQ++;loadQ()},1400);
+        }else{
+          combo=0;cD.textContent="x0";loseH();
+          pW();
+          sFB("no","😅","Oops!","Try the other stone!");
+          spk("Try again!");
+          setTimeout(function(){
+            fb.classList.remove("show");
+            chosen.classList.remove("shatter","broke","cracking","smash-hit");
+            chosen.style.opacity="1";
+            locked=false;
+          },1200);
+        }
+      },120);
+    });
+  }
+
+  function showBn(t){
+    var el=document.getElementById("flB");
+    if(!el){
+      el=document.createElement("div");el.id="flB";
+      el.style.cssText="position:fixed;top:100px;left:50%;transform:translateX(-50%) translateY(-10px);z-index:150;font-family:Fredoka,sans-serif;font-weight:700;padding:8px 22px;border-radius:999px;background:linear-gradient(135deg,#ff9f5a,#ff7aa8);color:#fff;font-size:15px;opacity:0;pointer-events:none;transition:.35s;white-space:nowrap;box-shadow:0 6px 16px rgba(0,0,0,.28)";
+      document.body.appendChild(el);
+    }
+    el.textContent=t;el.style.opacity="0";
+    requestAnimationFrame(function(){el.style.opacity="1";el.style.transform="translateX(-50%) translateY(0)"});
+    clearTimeout(el._t);el._t=setTimeout(function(){el.style.opacity="0";el.style.transform="translateX(-50%) translateY(-10px)"},1200);
+  }
+
+  function sFB(tp,e,t,x){
+    fb.className="fb "+tp+" show";
+    fE.textContent=e;fT.textContent=t;fX.textContent=x||"";
+    pA.style.display=tp==="fn"?"inline-block":"none";
+    if(tp!=="fn")setTimeout(function(){fb.classList.remove("show")},900);
+  }
+
+  function loseH(){
+    hearts=Math.max(0,hearts-1);
+    hC.querySelectorAll(".ht").forEach(function(h,i){h.classList.toggle("lost",i>=hearts)});
+    if(hearts<=0)setTimeout(function(){sFB("fn","💙","Game Over!","Score: "+score);pA.style.display="inline-block"},650);
+  }
+
+  function showFin(){
+    var em,ti;
+    if(hearts===3){em="🌟";ti="PERFECT!";pF();spk("Perfect!")}
+    else if(hearts>=1){em="🏆";ti="Great Job!";spk("Great job!")}
+    else{em="💪";ti="Keep Trying!";spk("Keep trying")}
+    setTimeout(function(){
+      sFB("fn",em,ti,"Score: "+score);
+      pA.style.display="inline-block";
+      conf(55);setTimeout(function(){conf(30)},300);
+    },400);
+  }
+
+  stoneT.addEventListener("click",function(){pickStone(true)});
+  stoneF.addEventListener("click",function(){pickStone(false)});
+  stoneT.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" ")pickStone(true)});
+  stoneF.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" ")pickStone(false)});
+
+  pA.addEventListener("click",function(){
+    fb.classList.remove("show","ok","no","fn");
+    cQ=0;score=0;combo=0;hearts=3;locked=false;
+    sD.textContent="0";cD.textContent="x0";
+    hC.querySelectorAll(".ht").forEach(function(h){h.classList.remove("lost")});
+    setTimeout(loadQ,300);
+  });
+  sndB.addEventListener("click",function(){
+    sndOn=!sndOn;sndB.textContent=sndOn?"🔊":"🔇";
+    if(!sndOn&&"speechSynthesis" in window)speechSynthesis.cancel();
+  });
+
+  loadQ();
+})();
+</script>
+</body>
+</html>

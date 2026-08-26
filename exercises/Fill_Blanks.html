@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Plant Quiz - Type Answer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Livvic:wght@300;400;500;600;800&display=swap" rel="stylesheet"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+
+    @font-face {
+    font-family: 'CCSYBold';
+    src: url('./assets/CCSYBOLD.TTF') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+ 
+@font-face {
+    font-family: 'CCSyntroman';
+    src: url('../assets/CCSYNTRO.TTF') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+ 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+           font-family: 'CCSyntroman';
+        }
+       
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+           
+        }
+
+        .quiz-container {
+            width: 90%;
+            max-width: 1100px;
+            padding: 25px;
+            text-align: center;
+       
+        }
+
+        .question-section {
+            margin: 10px 0;
+        }
+
+        .question-title {
+            font-size: 30px;
+            color: #2f4f4f;
+            font-weight: 400;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            text-align: start;
+            margin-bottom: 5%;
+        }
+
+        #questionImage {
+            width: 400px;
+            height: 260px;
+            object-fit: contain;
+        }
+
+        .answer-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px 0 5px;
+            gap: 10px;
+        }
+
+        /* Shouter character */
+        .shouter-wrap {
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+        .shouter-svg {
+            width: 100px;
+            height: 130px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+        }
+
+        .shouter-svg .mouth-open { display: none; }
+        .shouter-svg.shouting .mouth-open { display: block; }
+        .shouter-svg.shouting .mouth-closed { display: none; }
+
+        .speech-bubble {
+            position: relative;
+            background: #fff;
+            border: 3px solid #2cca68;
+            border-radius: 18px;
+            padding: 8px 18px;
+            font-size: 28px;
+            font-weight: 900;
+            color: #1e293b;
+            min-width: 50px;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 12px rgba(44, 202, 104, 0.25);
+        }
+
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            left: -12px;
+            bottom: 18px;
+            border: 8px solid transparent;
+            border-right-color: #2cca68;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            left: -7px;
+            bottom: 20px;
+            border: 6px solid transparent;
+            border-right-color: #fff;
+        }
+
+        .speech-bubble.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Blank slots row */
+        .blanks-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .blank-slot {
+            width: 48px;
+            height: 56px;
+            border: 3px dashed #94a3b8;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: #94a3b8;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .blank-slot .slot-num {
+            font-size: 10px;
+            color: #94a3b8;
+            line-height: 1;
+        }
+
+        .blank-slot .slot-letter {
+            font-size: 22px;
+            font-weight: 900;
+            color: #1e293b;
+            line-height: 1;
+        }
+
+        .blank-slot.active {
+            border-color: #2cca68;
+            background: #e8fff0;
+            box-shadow: 0 0 0 3px rgba(44, 202, 104, 0.2);
+            transform: scale(1.05);
+        }
+
+        .blank-slot.filled {
+            border-style: solid;
+            border-color: #2cca68;
+            background: #d8ffdf;
+        }
+
+        .blank-slot.filled .slot-letter {
+            color: #16853a;
+            animation: letterPop 0.35s ease;
+        }
+
+        .blank-slot.wrong-flash {
+            animation: slotShake 0.45s ease;
+            border-color: #ef4444;
+            background: #fff0f0;
+        }
+
+        @keyframes letterPop {
+            0% { transform: scale(0.3) rotate(-10deg); }
+            60% { transform: scale(1.2) rotate(3deg); }
+            100% { transform: scale(1) rotate(0); }
+        }
+
+        @keyframes slotShake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px) rotate(-3deg); }
+            40% { transform: translateX(8px) rotate(3deg); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+        }
+
+        .blank-space {
+            width: 20px;
+        }
+
+        /* Letter tiles area */
+        .letters-area {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            min-height: 60px;
+        }
+
+        .letter-tile {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            border: 2px solid #dce8f0;
+            background: #fff;
+            color: #10236d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 900;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 4px 0 #c5dbe9, 0 6px 12px rgba(43,136,183,0.15);
+            transition: transform 0.15s ease, opacity 0.2s ease;
+        }
+
+        .letter-tile:hover {
+            transform: translateY(-4px);
+        }
+
+        .letter-tile:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #c5dbe9;
+        }
+
+        .letter-tile.used {
+            opacity: 0.2;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .letter-tile.wrong {
+            animation: tileWrong 0.45s ease;
+        }
+
+        @keyframes tileWrong {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px) rotate(-3deg); }
+            50% { transform: translateX(10px) rotate(3deg); }
+            75% { transform: translateX(-6px); }
+        }
+
+        /* Flying letter animation */
+        .flying-letter {
+            position: fixed;
+            z-index: 200;
+            font-size: 30px;
+            font-weight: 900;
+            color: #16853a;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            pointer-events: none;
+            transition: none;
+        }
+
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .quiz-navigation button {
+            width: 140px;
+            padding: 13px 32px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            border-radius: 35px;
+            border: 3px solid #ffffff;
+            font-size: 20px;
+            font-weight: 400;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        #previousButton {
+            background: #7fc0eb;
+        }
+
+        #nextButton {
+            background: #ecc74e;
+        }
+
+        #previousButton:active {
+            background: #6bb4e4;
+        }
+
+        #nextButton:active {
+            background: #e6be3d;
+        }
+
+        .quiz-navigation button:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        .answer-status {
+            margin: 10px 0;
+            font-size: 18px;
+            font-weight: 600;
+            min-height: 30px;
+        }
+
+        .answer-status.correct {
+            color: #10b981;
+
+        }
+
+        .answer-status.wrong {
+            color: #ef4444;
+        }
+
+        /* ===== NEW POPUP DESIGNS ===== */
+        .kid-popup {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            /* background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px); */
+            padding: 20px;
+        }
+
+        .kid-card {
+            background: #ffffff;
+            width: 380px;
+            max-width: 95%;
+            padding: 32px 28px;
+            border-radius: 44px;
+            text-align: center;
+            animation: kidPop 0.6s ease;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative circles */
+        .kid-card::before,
+        .kid-card::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .kid-card::before {
+            width: 200px;
+            height: 200px;
+            top: -80px;
+            right: -60px;
+            background: #ffd93d;
+        }
+
+        .kid-card::after {
+            width: 150px;
+            height: 150px;
+            bottom: -60px;
+            left: -50px;
+            background: #6bcbff;
+        }
+
+        .kid-card>* {
+            position: relative;
+            z-index: 2;
+        }
+
+        .kid-icon {
+            font-size: 4.8em;
+            margin-bottom: 6px;
+            animation: emojiBounce 0.9s infinite alternate;
+            display: inline-block;
+        }
+
+        .kid-card h3 {
+            font-size: 2.2em;
+            margin-bottom: 4px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .kid-card p {
+            font-size: 1.1em;
+            color: #555;
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        /* Correct Popup */
+        .kid-correct .kid-card {
+            background: linear-gradient(145deg, #f0fff4, #d4f5e6);
+            border: 5px solid #38d9a9;
+        }
+
+        .kid-correct .kid-card h3 {
+            color: #0b8a4a;
+        }
+
+        .kid-correct .kid-card p {
+            color: #1a6a3a;
+        }
+
+        .kid-correct .kid-card::before {
+            background: #38d9a9;
+        }
+
+        .kid-correct .kid-card::after {
+            background: #38d9a9;
+        }
+
+        /* Wrong Popup */
+        .kid-wrong .kid-card {
+            background: linear-gradient(145deg, #fff5f5, #fce4e4);
+            border: 5px solid #ff8a8a;
+        }
+
+        .kid-wrong .kid-card h3 {
+            color: #c0392b;
+        }
+
+        .kid-wrong .kid-card p {
+            color: #922b21;
+        }
+
+        .kid-wrong .kid-card::before {
+            background: #ff8a8a;
+        }
+
+        .kid-wrong .kid-card::after {
+            background: #ff8a8a;
+        }
+
+        @keyframes kidPop {
+            0% {
+                transform: scale(0.3) rotate(-8deg) perspective(400px) rotateX(10deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1) rotate(2deg) perspective(400px) rotateX(-5deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) rotate(0) perspective(400px) rotateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes emojiBounce {
+            from {
+                transform: translateY(0) scale(1);
+            }
+            to {
+                transform: translateY(-12px) scale(1.05);
+            }
+        }
+
+        /* ===== FINAL POPUP ===== */
+        #finalPopup {
+            position: fixed;
+            inset: 0;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 4000;
+            /* background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px); */
+            padding: 20px;
+        }
+
+        .final-kid-box {
+            background: linear-gradient(145deg, #fff7d6, #e6fff5);
+            padding: 35px 40px;
+            border-radius: 44px;
+            text-align: center;
+            width: 480px;
+            max-width: 95%;
+            animation: finalBounce .8s ease;
+            /* box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2); */
+            border: 4px solid rgba(255, 255, 255, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .final-kid-box::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            top: -120px;
+            right: -100px;
+            background: #ffd93d;
+            border-radius: 50%;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .final-kid-box>* {
+            position: relative;
+            z-index: 2;
+        }
+
+        .final-kid-box h2 {
+            font-size: 2.4em;
+            color: #2f9e44;
+            margin-bottom: 8px;
+            
+            font-weight: 700 !important;
+        }
+
+        .final-kid-box p {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #2d3a3a;
+        }
+
+        #stars {
+            font-size: 2.6em;
+            margin: 14px 0;
+            letter-spacing: 6px;
+        }
+
+        .playAgain-btn {
+            background: #ffac30;
+            color: white;
+            border: none;
+            padding: 16px 38px;
+            border-radius: 40px;
+            font-size: 1.15em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.2s;
+            box-shadow: 0 8px 0 #d4871f, 0 8px 24px rgba(255, 172, 48, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .playAgain-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .playAgain-btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #d4871f;
+        }
+
+        @keyframes finalBounce {
+            0% {
+                transform: scale(0.3) perspective(400px) rotateX(15deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.08) perspective(400px) rotateX(-5deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) perspective(400px) rotateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width:1200px) {
+            .question-title {
+                font-size: 26px;
+            }
+            #questionImage {
+                width: 320px;
+                height: 200px;
+            }
+        }
+        @media (max-width:900px) {
+            body {
+                align-items: center;
+                padding: 20px;
+                overflow: auto;
+            }
+            .quiz-container {
+                width: 100%;
+                max-width: 900px;
+                padding: 25px;
+            }
+            .question-title {
+                font-size: 26px;
+                height: auto;
+                padding: 10px;
+                text-align: center;
+            }
+            #questionImage {
+                width: 200px;
+                height: 150px;
+            }
+            #answerInput {
+                width: 90%;
+                font-size: 20px;
+                padding: 13px 32px;
+            }
+            .quiz-navigation {
+                margin-top: 25px;
+            }
+            .kid-card {
+                width: 340px;
+                padding: 28px 24px;
+            }
+            .kid-icon {
+                font-size: 4em;
+            }
+            .kid-card h3 {
+                font-size: 1.8em;
+            }
+            .final-kid-box {
+                width: 90%;
+                max-width: 380px;
+                padding: 28px 24px;
+            }
+            .final-kid-box h2 {
+                font-size: 2em;
+            }
+            .final-kid-box p {
+                font-size: 1.2em;
+            }
+            #stars {
+                font-size: 2.2em;
+            }
+        }
+
+        @media (max-width:768px) {
+            .quiz-container {
+                padding: 20px;
+            }
+            .question-title {
+                font-size: 22px;
+            }
+            #questionImage {
+                width: 180px;
+                height: 140px;
+            }
+            .quiz-navigation button {
+                padding: 6px 20px;
+                font-size: 18px;
+            }
+            #answerInput {
+                font-size: 16px;
+                padding: 12px 16px;
+            }
+            .kid-card {
+                width: 300px;
+                padding: 22px 20px;
+                border-radius: 36px;
+            }
+            .kid-icon {
+                font-size: 3.6em;
+            }
+            .kid-card h3 {
+                font-size: 1.6em;
+            }
+            .kid-card p {
+                font-size: 1em;
+            }
+            .final-kid-box {
+                padding: 24px 20px;
+            }
+            .final-kid-box h2 {
+                font-size: 1.8em;
+            }
+        }
+
+        @media (max-width:480px) {
+            body {
+                padding: 30px 0 10px;
+                align-items: flex-start;
+            }
+            .quiz-container {
+                padding: 20px 5px;
+            }
+            .question-title {
+                font-size: 20px;
+            }
+            #questionImage {
+                width: 150px;
+                height: 100px;
+            }
+            #answerInput {
+                width: 95%;
+                font-size: 14px;
+                padding: 10px 14px;
+            }
+            #submitButton {
+                padding: 8px 25px;
+                font-size: 16px;
+            }
+            .quiz-navigation {
+                margin-top: 10px;
+            }
+            .kid-card {
+                width: 280px;
+                padding: 18px 16px;
+                border-radius: 32px;
+            }
+            .kid-icon {
+                font-size: 3em;
+            }
+            .kid-card h3 {
+                font-size: 1.4em;
+            }
+            .kid-card p {
+                font-size: 0.9em;
+            }
+            .final-kid-box {
+                width: 90%;
+                max-width: 300px;
+                padding: 20px 16px;
+                border-radius: 36px;
+            }
+            .final-kid-box h2 {
+                font-size: 1.5em;
+            }
+            .final-kid-box p {
+                font-size: 1em;
+            }
+            #stars {
+                font-size: 1.8em;
+            }
+            .playAgain-btn {
+                padding: 10px 22px;
+                font-size: 0.95em;
+            }
+        }
+
+        @media screen and (min-width: 1325px) and (max-width: 1440px) {
+            .quiz-container {
+                width: 1000px;
+            }
+            .question-title {
+                font-size: 32px;
+            }
+            #questionImage {
+                width: 300px;
+                height: 190px;
+            }
+                  .question-number{
+    position:absolute;
+    top:-10px;
+    left:40%;
+
+}
+            #answerInput {
+                font-size: 24px;
+                padding: 18px 28px;
+            }
+            #submitButton {
+                font-size: 20px;
+                padding: 12px 30px;
+            }
+            .quiz-navigation button {
+                font-size: 20px;
+                padding: 14px 36px;
+            }
+            /* .kid-card {
+                width: 420px;
+                padding: 34px 30px;
+            }
+            .kid-icon {
+                font-size: 5em;
+            }
+            .final-kid-box {
+                width: 520px;
+                padding: 38px;
+            }
+            .final-kid-box h2 {
+                font-size: 2.6em;
+            } */
+        }
+
+        @media screen and (min-width: 1441px) and (max-width: 1920px) {
+            .quiz-container {
+                width: 1100px;
+            }
+            .question-title {
+                font-size: 40px;
+            }
+            #questionImage {
+                width: 300px;
+                height: 200px;
+            }
+            .question-number{
+    position:absolute;
+    top:-10px;
+    left:40%;
+
+}
+            #answerInput {
+                font-size: 28px;
+                padding: 20px 32px;
+            }
+            #submitButton {
+                font-size: 22px;
+                padding: 16px 46px;
+            }
+            .quiz-navigation button {
+                font-size: 22px;
+                padding: 16px 36px;
+            }
+            .kid-card {
+                width: 460px;
+                padding: 38px 34px;
+            }
+            .kid-icon {
+                font-size: 5.4em;
+            }
+            .final-kid-box {
+                width: 560px;
+                padding: 42px;
+            }
+            .final-kid-box h2 {
+                font-size: 2.8em;
+            }
+            #stars {
+                font-size: 2.8em;
+            }
+            .playAgain-btn {
+                padding: 18px 44px;
+                font-size: 1.3em;
+            }
+        }
+
+        @media screen and (min-width: 1921px) {
+            .quiz-container {
+                width: 1200px;
+            }
+            .question-title {
+                font-size: 40px;
+            }
+            #questionImage {
+                width: 340px;
+                height: 230px;
+            }
+            #answerInput {
+                font-size: 32px;
+                padding: 22px 36px;
+            }
+            #submitButton {
+                font-size: 24px;
+                padding: 18px 50px;
+            }
+            .quiz-navigation button {             
+                 padding: 16px 36px;
+                font-size: 22px;                
+            }
+
+            
+            .kid-card {
+                width: 500px;
+                padding: 42px 38px;
+                border-radius: 52px;
+            }
+            .kid-icon {
+                font-size: 5.8em;
+            }
+            .kid-card h3 {
+                font-size: 2.6em;
+            }
+            .final-kid-box {
+                width: 600px;
+                padding: 48px;
+            }
+            .final-kid-box h2 {
+                font-size: 3em;
+            }
+            #stars {
+                font-size: 3em;
+            }
+            .playAgain-btn {
+                padding: 20px 48px;
+                font-size: 1.4em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="quiz-container">
+
+        <div class="question-section">
+            <div id="questionTitle" class="question-title"></div>
+            <img id="questionImage" />
+        </div>
+
+        <div class="answer-area" id="answerArea">
+            <div class="shouter-wrap">
+                <svg class="shouter-svg" id="shouterSvg" viewBox="0 0 100 130">
+                    <!-- Body -->
+                    <rect x="25" y="55" width="50" height="45" rx="10" fill="#3b82f6"/>
+                    <!-- Arms -->
+                    <line x1="25" y1="65" x2="8" y2="80" stroke="#f5c6a0" stroke-width="6" stroke-linecap="round"/>
+                    <line x1="75" y1="65" x2="92" y2="80" stroke="#f5c6a0" stroke-width="6" stroke-linecap="round"/>
+                    <!-- Head -->
+                    <circle cx="50" cy="32" r="26" fill="#f5c6a0"/>
+                    <!-- Hair -->
+                    <path d="M24 25 Q30 8 50 12 Q70 8 76 25 Q76 16 62 14 Q38 14 24 25Z" fill="#5a3a1a"/>
+                    <!-- Eyes -->
+                    <circle cx="40" cy="30" r="3.5" fill="#1e293b"/>
+                    <circle cx="60" cy="30" r="3.5" fill="#1e293b"/>
+                    <circle cx="41.5" cy="29" r="1.2" fill="#fff"/>
+                    <circle cx="61.5" cy="29" r="1.2" fill="#fff"/>
+                    <!-- Eyebrows (raised for shouting) -->
+                    <line x1="35" y1="22" x2="44" y2="20" stroke="#5a3a1a" stroke-width="2.5" stroke-linecap="round"/>
+                    <line x1="56" y1="20" x2="65" y2="22" stroke="#5a3a1a" stroke-width="2.5" stroke-linecap="round"/>
+                    <!-- Mouth closed (default) -->
+                    <path class="mouth-closed" d="M42 40 Q50 46 58 40" stroke="#c0392b" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+                    <!-- Mouth open (shouting) -->
+                    <ellipse class="mouth-open" cx="50" cy="41" rx="10" ry="8" fill="#c0392b"/>
+                    <ellipse class="mouth-open" cx="50" cy="39" rx="7" ry="4" fill="#e74c3c"/>
+                    <!-- Legs -->
+                    <rect x="32" y="97" width="12" height="18" rx="5" fill="#1e40af"/>
+                    <rect x="56" y="97" width="12" height="18" rx="5" fill="#1e40af"/>
+                    <!-- Shoes -->
+                    <ellipse cx="38" cy="117" rx="9" ry="5" fill="#5a3a1a"/>
+                    <ellipse cx="62" cy="117" rx="9" ry="5" fill="#5a3a1a"/>
+                </svg>
+                <div class="speech-bubble" id="speechBubble"></div>
+            </div>
+            <div class="blanks-row" id="blanksRow"></div>
+            <div id="answerStatus" class="answer-status"></div>
+        </div>
+
+        <div class="letters-area" id="lettersArea"></div>
+
+        <div class="quiz-navigation">
+            <button id="previousButton"><i class="fa-solid fa-angles-left"></i> Prev</button>
+            <button id="nextButton">Next <i class="fa-solid fa-angles-right"></i></button>
+        </div>
+
+    </div>
+
+    <!-- ===== POPUPS ===== -->
+    <div id="answerPopup" class="kid-popup">
+        <div class="kid-card">
+            <div class="kid-icon" id="popupIcon"></div>
+            <h3 id="popupTitle"></h3>
+            <p id="popupMsg"></p>
+        </div>
+    </div>
+
+    <div id="finalPopup">
+        <div class="final-kid-box">
+            <h2>🎉 Congratulations!</h2>
+            <p id="finalScore"></p>
+            <div id="stars"></div>
+            <button class="playAgain-btn" onclick="location.reload()">Play Again</button>
+        </div>
+    </div>
+
+    <audio id="correctSound" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
+    <audio id="wrongSound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+
+    <script>
+        const quizData = [{
+            q: "Q1. Cats hunt ________.",
+            a: "Rats",
+            img: "../assets/images/ft111.png",
+        }, {
+            q: "Q2. The king decided to give a cat and a ________ to each house in the village.",
+            a: "Cow",
+            img: "../assets/images/cow1.png",
+        }, {
+            q: "Q3. The cats drank milk and became ________.",
+            a: "Lazy",
+            img: "../assets/images/ft133.png",
+        }, {
+            q: "Q4. There was an intelligent minister named ________.",
+            a: "Tenali Ramakrishna",
+            img: "../assets/images/ft4.png",
+        }, {
+            q: "Q5. When the cat drank the hot milk, it burnt its ________.",
+            a: "Tongue",
+            img: "../assets/images/ft5.png",
+        }];
+
+        function speak(t) {
+            speechSynthesis.cancel();
+            const msg = new SpeechSynthesisUtterance(t);
+            msg.lang = "en-US";
+            msg.volume = 0.25;
+            msg.rate = 1;
+            msg.pitch = 1;
+            speechSynthesis.speak(msg);
+        }
+
+        let currentQuestionIndex = 0;
+        let quizScore = 0;
+        const answeredQuestions = Array(quizData.length).fill(false);
+
+        const questionTitle = document.getElementById("questionTitle");
+        const questionImage = document.getElementById("questionImage");
+        const blanksRow = document.getElementById("blanksRow");
+        const lettersArea = document.getElementById("lettersArea");
+        const answerStatus = document.getElementById("answerStatus");
+        const nextButton = document.getElementById("nextButton");
+        const previousButton = document.getElementById("previousButton");
+        const shouterSvg = document.getElementById("shouterSvg");
+        const speechBubble = document.getElementById("speechBubble");
+
+        let correctAnswer = "";
+        let currentAnswer = [];
+        let currentSlotIndex = 0;
+        let locked = false;
+
+        function shuffle(arr) {
+            const copy = [...arr];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        }
+
+        function smallConfetti() {
+            confetti({ particleCount: 40, spread: 70, origin: { y: 0.7 } });
+        }
+
+        function bigConfetti() {
+            confetti({ particleCount: 200, spread: 110, origin: { y: 0.5 } });
+            setTimeout(() => {
+                confetti({ particleCount: 120, spread: 130, origin: { y: 0.4, x: 0.2 } });
+                confetti({ particleCount: 120, spread: 130, origin: { y: 0.4, x: 0.8 } });
+            }, 150);
+        }
+
+        function showPopup(isCorrect) {
+            const popup = document.getElementById("answerPopup");
+            const icon = document.getElementById("popupIcon");
+            const title = document.getElementById("popupTitle");
+            const msg = document.getElementById("popupMsg");
+
+            popup.className = "kid-popup " + (isCorrect ? "kid-correct" : "kid-wrong");
+            popup.style.display = "flex";
+
+            if (isCorrect) {
+                icon.textContent = "🌟";
+                title.textContent = "Amazing!";
+                msg.textContent = "You got it right! ✨";
+            } else {
+                icon.textContent = "😒";
+                title.textContent = "Keep Going!";
+                msg.textContent = "Try again, you can do it! 🌈";
+            }
+
+            const sound = document.getElementById(isCorrect ? "correctSound" : "wrongSound");
+            if (sound) sound.play().catch(() => {});
+
+            setTimeout(() => {
+                popup.style.display = "none";
+            }, 1600);
+        }
+
+        function showFinal() {
+            const popup = document.getElementById("finalPopup");
+            document.getElementById("finalScore").textContent =
+                `Your Score: ${quizScore} / ${quizData.length}`;
+            document.getElementById("stars").textContent = "⭐".repeat(quizScore);
+            popup.style.display = "flex";
+            bigConfetti();
+        }
+
+        function playSound(type) {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return;
+            const ctx = new AC();
+            if (type === "correct") {
+                [620, 780, 940].forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = "sine";
+                    osc.frequency.value = freq;
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    const t = ctx.currentTime + i * 0.08;
+                    gain.gain.setValueAtTime(0.001, t);
+                    gain.gain.exponentialRampToValueAtTime(0.12, t + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+                    osc.start(t);
+                    osc.stop(t + 0.22);
+                });
+            } else if (type === "wrong") {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = "sawtooth";
+                osc.frequency.setValueAtTime(200, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.25);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.35);
+            } else if (type === "shout") {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(300, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + 0.1);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.18);
+            }
+        }
+
+        function shoutLetter(letter) {
+            return new Promise(resolve => {
+                shouterSvg.classList.add("shouting");
+                speechBubble.textContent = letter;
+                speechBubble.classList.add("show");
+                playSound("shout");
+
+                setTimeout(() => {
+                    shouterSvg.classList.remove("shouting");
+                    speechBubble.classList.remove("show");
+                    setTimeout(resolve, 150);
+                }, 600);
+            });
+        }
+
+        function renderBlanks() {
+            blanksRow.innerHTML = "";
+            currentAnswer = new Array(correctAnswer.replace(/\s/g, "").length).fill("");
+
+            const answerNoSpace = correctAnswer.replace(/\s/g, "");
+            let charIndex = 0;
+
+            for (let i = 0; i < correctAnswer.length; i++) {
+                if (correctAnswer[i] === " ") {
+                    const space = document.createElement("div");
+                    space.className = "blank-space";
+                    blanksRow.appendChild(space);
+                } else {
+                    const slot = document.createElement("div");
+                    slot.className = "blank-slot" + (charIndex === 0 ? " active" : "");
+                    slot.dataset.index = charIndex;
+                    slot.innerHTML = `<span class="slot-num">${charIndex + 1}</span><span class="slot-letter"></span>`;
+                    blanksRow.appendChild(slot);
+                    charIndex++;
+                }
+            }
+        }
+
+        function createLetterTiles() {
+            lettersArea.innerHTML = "";
+            const answerNoSpace = correctAnswer.replace(/\s/g, "");
+            const letters = shuffle(answerNoSpace.split(""));
+
+            letters.forEach((letter, i) => {
+                const tile = document.createElement("div");
+                tile.className = "letter-tile";
+                tile.textContent = letter;
+                tile.dataset.letter = letter;
+                tile.dataset.tileIndex = i;
+
+                tile.addEventListener("click", () => {
+                    if (locked || tile.classList.contains("used")) return;
+                    handleLetterClick(letter, tile);
+                });
+
+                lettersArea.appendChild(tile);
+            });
+        }
+
+        async function handleLetterClick(letter, tile) {
+            if (locked) return;
+            const answerNoSpace = correctAnswer.replace(/\s/g, "");
+
+            if (currentSlotIndex >= answerNoSpace.length) return;
+
+            const correctLetter = answerNoSpace[currentSlotIndex];
+
+            if (letter !== correctLetter) {
+                // WRONG
+                locked = true;
+                tile.classList.add("wrong");
+                playSound("wrong");
+
+                const slots = blanksRow.querySelectorAll(".blank-slot");
+                slots[currentSlotIndex].classList.add("wrong-flash");
+
+                showPopup(false);
+                speak("Try again");
+
+                setTimeout(() => {
+                    tile.classList.remove("wrong");
+                    slots[currentSlotIndex].classList.remove("wrong-flash");
+                    locked = false;
+                }, 700);
+                return;
+            }
+
+            // CORRECT - Shout the letter!
+            locked = true;
+
+            // Animate the shouter shouting the letter
+            await shoutLetter(letter);
+
+            // Fly the letter from tile to blank slot
+            const slots = blanksRow.querySelectorAll(".blank-slot");
+            const slot = slots[currentSlotIndex];
+            const slotRect = slot.getBoundingClientRect();
+            const tileRect = tile.getBoundingClientRect();
+
+            const flyEl = document.createElement("div");
+            flyEl.className = "flying-letter";
+            flyEl.textContent = letter;
+            flyEl.style.left = tileRect.left + tileRect.width / 2 - 12 + "px";
+            flyEl.style.top = tileRect.top + "px";
+            document.body.appendChild(flyEl);
+
+            tile.classList.add("used");
+
+            requestAnimationFrame(() => {
+                flyEl.style.transition = "all 0.35s cubic-bezier(0.2, 0.8, 0.3, 1)";
+                flyEl.style.left = slotRect.left + slotRect.width / 2 - 12 + "px";
+                flyEl.style.top = slotRect.top + "px";
+                flyEl.style.transform = "scale(1.3)";
+                flyEl.style.opacity = "0.9";
+            });
+
+            setTimeout(() => {
+                flyEl.remove();
+                playSound("correct");
+
+                currentAnswer[currentSlotIndex] = letter;
+                slot.querySelector(".slot-letter").textContent = letter;
+                slot.classList.remove("active");
+                slot.classList.add("filled");
+
+                currentSlotIndex++;
+
+                // Check if all letters filled
+                if (currentSlotIndex >= answerNoSpace.length) {
+                    // COMPLETE!
+                    quizScore++;
+                    smallConfetti();
+                    speak("Correct");
+
+                    answeredQuestions[currentQuestionIndex] = true;
+
+                    nextButton.disabled = false;
+
+                    answerStatus.textContent = "✓ Correct! Great job! 🎉";
+                    answerStatus.className = "answer-status correct";
+                    answerStatus.style.display = "block";
+
+                    if (currentQuestionIndex === quizData.length - 1) {
+                        setTimeout(showFinal, 1800);
+                    }
+
+                    locked = false;
+                    return;
+                }
+
+                // Activate next slot
+                slots[currentSlotIndex].classList.add("active");
+                locked = false;
+            }, 380);
+        }
+
+        function renderQuestion() {
+            const question = quizData[currentQuestionIndex];
+            questionTitle.textContent = question.q;
+            questionImage.src = question.img;
+            correctAnswer = question.a;
+            currentSlotIndex = 0;
+
+            answerStatus.textContent = "";
+            answerStatus.className = "answer-status";
+
+            renderBlanks();
+
+            if (answeredQuestions[currentQuestionIndex]) {
+                // Show completed answer
+                const answerNoSpace = correctAnswer.replace(/\s/g, "");
+                const slots = blanksRow.querySelectorAll(".blank-slot");
+                let charIdx = 0;
+                for (let i = 0; i < correctAnswer.length; i++) {
+                    if (correctAnswer[i] !== " " && charIdx < slots.length) {
+                        slots[charIdx].querySelector(".slot-letter").textContent = correctAnswer[i];
+                        slots[charIdx].classList.remove("active");
+                        slots[charIdx].classList.add("filled");
+                        charIdx++;
+                    }
+                }
+                lettersArea.innerHTML = "";
+                nextButton.disabled = false;
+                answerStatus.textContent = "✓ Answered correctly!";
+                answerStatus.className = "answer-status correct";
+                answerStatus.style.display = "block";
+            } else {
+                createLetterTiles();
+                nextButton.disabled = true;
+                answerStatus.style.display = "none";
+            }
+
+            previousButton.disabled = currentQuestionIndex === 0;
+        }
+
+        nextButton.addEventListener("click", () => {
+            if (!nextButton.disabled) {
+                currentQuestionIndex++;
+                renderQuestion();
+            }
+        });
+
+        previousButton.addEventListener("click", () => {
+            if (!previousButton.disabled) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        });
+
+        renderQuestion();
+    </script>
+</body>
+
+</html>

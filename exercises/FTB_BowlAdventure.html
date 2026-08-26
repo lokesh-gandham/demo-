@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adventure Quest - Fill in the Blanks</title>
+
+<style>
+/* =========================================================
+   RESET & BASE
+   ========================================================= */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,body{
+    width:100%;
+    min-height:100%;
+    overflow:hidden;
+}
+
+body{
+    font-family:'Fredoka',sans-serif;
+    background:#0a5e2a;
+    color:#2d1a0e;
+}
+
+/* =========================================================
+   ADVENTURE BACKGROUND
+   ========================================================= */
+.game-wrapper{
+    position:relative;
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+}
+
+/* Sky gradient */
+.game-wrapper::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:0;
+    background:
+        linear-gradient(
+            180deg,
+            #87CEEB 0%,
+            #a8d8ea 25%,
+            #5bb85b 55%,
+            #3a9a3a 70%,
+            #2d7d2d 100%
+        );
+}
+
+/* Sun glow */
+.game-wrapper::after{
+    content:"";
+    position:absolute;
+    top:-60px;
+    right:8%;
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    background:
+        radial-gradient(
+            circle,
+            #ffe44d 0%,
+            #ffd700 30%,
+            rgba(255,215,0,.3) 60%,
+            transparent 70%
+        );
+    z-index:1;
+    animation:sunPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes sunPulse{
+    from{ transform:scale(1); opacity:.9; }
+    to{ transform:scale(1.08); opacity:1; }
+}
+
+/* Clouds */
+.cloud{
+    position:absolute;
+    z-index:1;
+    background:#fff;
+    border-radius:50px;
+    opacity:.85;
+    animation:cloudFloat linear infinite;
+}
+
+.cloud::before,
+.cloud::after{
+    content:"";
+    position:absolute;
+    background:#fff;
+    border-radius:50%;
+}
+
+.cloud-1{
+    width:120px;
+    height:40px;
+    top:8%;
+    left:-150px;
+    animation-duration:25s;
+}
+.cloud-1::before{
+    width:50px;
+    height:50px;
+    top:-25px;
+    left:20px;
+}
+.cloud-1::after{
+    width:70px;
+    height:60px;
+    top:-30px;
+    left:50px;
+}
+
+.cloud-2{
+    width:100px;
+    height:35px;
+    top:15%;
+    left:-120px;
+    animation-duration:35s;
+    animation-delay:8s;
+}
+.cloud-2::before{
+    width:45px;
+    height:45px;
+    top:-22px;
+    left:15px;
+}
+.cloud-2::after{
+    width:55px;
+    height:50px;
+    top:-28px;
+    left:40px;
+}
+
+.cloud-3{
+    width:90px;
+    height:30px;
+    top:5%;
+    left:-100px;
+    animation-duration:30s;
+    animation-delay:15s;
+}
+.cloud-3::before{
+    width:40px;
+    height:40px;
+    top:-20px;
+    left:12px;
+}
+.cloud-3::after{
+    width:50px;
+    height:45px;
+    top:-25px;
+    left:35px;
+}
+
+@keyframes cloudFloat{
+    from{ transform:translateX(0); }
+    to{ transform:translateX(calc(100vw + 200px)); }
+}
+
+/* Trees left side */
+.tree{
+    position:absolute;
+    z-index:2;
+}
+
+.tree-trunk{
+    width:20px;
+    height:60px;
+    background:linear-gradient(90deg,#5a3a1a,#8B4513,#5a3a1a);
+    margin:0 auto;
+    border-radius:4px;
+}
+
+.tree-top{
+    width:0;
+    height:0;
+    border-left:45px solid transparent;
+    border-right:45px solid transparent;
+    border-bottom:70px solid #228B22;
+    position:relative;
+    margin-left:-22px;
+}
+
+.tree-top::after{
+    content:"";
+    position:absolute;
+    top:20px;
+    left:-35px;
+    width:0;
+    height:0;
+    border-left:35px solid transparent;
+    border-right:35px solid transparent;
+    border-bottom:55px solid #1a7a1a;
+}
+
+.tree-1{ left:3%; bottom:28%; }
+.tree-2{ left:1%; bottom:32%; transform:scale(.8); }
+.tree-3{ right:3%; bottom:30%; }
+.tree-4{ right:2%; bottom:35%; transform:scale(.7); }
+
+/* River / Water */
+.water{
+    position:absolute;
+    bottom:0;
+    left:0;
+    right:0;
+    height:35%;
+    z-index:2;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(30,144,255,.7) 0%,
+            rgba(0,105,180,.85) 50%,
+            #0066aa 100%
+        );
+    overflow:hidden;
+}
+
+.water::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.08) 20px,
+            transparent 40px
+        );
+    animation:waterShimmer 3s linear infinite;
+}
+
+@keyframes waterShimmer{
+    from{ transform:translateX(0); }
+    to{ transform:translateX(40px); }
+}
+
+/* Water waves */
+.wave{
+    position:absolute;
+    width:200%;
+    height:18px;
+    left:-50%;
+    z-index:2;
+}
+
+.wave-1{
+    top:-8px;
+    background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60'%3E%3Cpath fill='rgba(30,144,255,0.5)' d='M0,30 C360,60 720,0 1080,30 C1260,45 1350,15 1440,30 L1440,60 L0,60Z'/%3E%3C/svg%3E")
+        repeat-x;
+    background-size:720px 18px;
+    animation:waveMove 4s linear infinite;
+}
+
+.wave-2{
+    top:-4px;
+    background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60'%3E%3Cpath fill='rgba(0,105,180,0.4)' d='M0,30 C240,0 480,60 720,30 C960,0 1200,60 1440,30 L1440,60 L0,60Z'/%3E%3C/svg%3E")
+        repeat-x;
+    background-size:600px 18px;
+    animation:waveMove 5s linear infinite reverse;
+}
+
+@keyframes waveMove{
+    from{ transform:translateX(0); }
+    to{ transform:translateX(50%); }
+}
+
+/* Islands */
+.island{
+    position:absolute;
+    z-index:3;
+}
+
+.island-base{
+    width:160px;
+    height:40px;
+    background:
+        radial-gradient(ellipse at 50% 40%,#8B6914,#6B4F0A);
+    border-radius:50%;
+    position:relative;
+    box-shadow:0 8px 15px rgba(0,0,0,.3);
+}
+
+.island-grass{
+    position:absolute;
+    top:-12px;
+    left:10px;
+    right:10px;
+    height:20px;
+    background:
+        linear-gradient(180deg,#4CAF50,#388E3C);
+    border-radius:50% 50% 0 0;
+}
+
+.island-1{
+    bottom:22%;
+    left:20%;
+    transform:translateX(-50%);
+}
+
+.island-2{
+    bottom:18%;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.island-3{
+    bottom:22%;
+    right:20%;
+    transform:translateX(50%);
+}
+
+/* Character on boat */
+.character{
+    position:absolute;
+    bottom:26%;
+    left:8%;
+    z-index:5;
+    animation:boatBob 2.5s ease-in-out infinite;
+}
+
+@keyframes boatBob{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    25%{ transform:translateY(-6px) rotate(1deg); }
+    75%{ transform:translateY(4px) rotate(-1deg); }
+}
+
+.boat{
+    width:90px;
+    height:35px;
+    background:
+        linear-gradient(180deg,#8B4513,#654321);
+    border-radius:0 0 40px 40px;
+    position:relative;
+    box-shadow:0 4px 8px rgba(0,0,0,.3);
+}
+
+.boat::before{
+    content:"";
+    position:absolute;
+    top:-5px;
+    left:10px;
+    right:10px;
+    height:8px;
+    background:#a0522d;
+    border-radius:4px 4px 0 0;
+}
+
+.character-body{
+    position:absolute;
+    bottom:28px;
+    left:20px;
+}
+
+/* =========================================================
+   HUD BAR
+   ========================================================= */
+.hud{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 20px;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(60,30,0,.85),
+            rgba(40,20,0,.75)
+        );
+    border-bottom:3px solid #8B4513;
+    box-shadow:0 4px 12px rgba(0,0,0,.4);
+}
+
+.hud-left,
+.hud-center,
+.hud-right{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.hud-item{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 14px;
+    border-radius:20px;
+    background:
+        linear-gradient(145deg,rgba(255,255,255,.15),rgba(255,255,255,.05));
+    border:2px solid rgba(255,255,255,.2);
+    color:#fff;
+    font-size:16px;
+    font-weight:700;
+    text-shadow:0 1px 2px rgba(0,0,0,.4);
+}
+
+.hud-item .icon{
+    font-size:20px;
+}
+
+.hud-back{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    border:3px solid #ffd700;
+    background:linear-gradient(145deg,#e74c3c,#c0392b);
+    color:#fff;
+    font-size:20px;
+    font-weight:900;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 3px 0 #96281b,0 5px 12px rgba(0,0,0,.3);
+    transition:transform .15s;
+    text-decoration:none;
+}
+
+.hud-back:hover{ transform:translateY(-2px); }
+.hud-back:active{ transform:translateY(2px); box-shadow:0 1px 0 #96281b; }
+
+.hud-sound{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    border:3px solid #ffd700;
+    background:linear-gradient(145deg,#f39c12,#e67e22);
+    color:#fff;
+    font-size:20px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 3px 0 #c0611a,0 5px 12px rgba(0,0,0,.3);
+    transition:transform .15s;
+}
+
+.hud-sound:hover{ transform:translateY(-2px); }
+.hud-sound:active{ transform:translateY(2px); }
+
+/* Hearts */
+.hearts{
+    display:flex;
+    gap:4px;
+}
+
+.heart{
+    font-size:22px;
+    transition:transform .3s;
+}
+
+.heart.lost{
+    filter:grayscale(1) opacity(.3);
+    transform:scale(.8);
+}
+
+/* =========================================================
+   QUESTION SCROLL
+   ========================================================= */
+.question-area{
+    position:fixed;
+    top:68px;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:10;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:12px 16px;
+    pointer-events:none;
+}
+
+.question-area > *{
+    pointer-events:auto;
+}
+
+/* Adventure Quest Title Banner */
+.quest-banner{
+    background:
+        linear-gradient(145deg,#8B4513,#654321);
+    border:3px solid #ffd700;
+    border-radius:12px;
+    padding:8px 30px;
+    color:#ffd700;
+    font-size:clamp(16px,2.2vw,26px);
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:3px;
+    text-shadow:0 2px 4px rgba(0,0,0,.5);
+    box-shadow:0 4px 0 #3a1f0a,0 6px 16px rgba(0,0,0,.4);
+    margin-bottom:10px;
+    text-align:center;
+}
+
+/* Question Sentence */
+.sentence-card{
+    background:
+        linear-gradient(145deg,
+            rgba(255,248,220,.95),
+            rgba(255,240,200,.92)
+        );
+    border:3px solid #8B4513;
+    border-radius:16px;
+    padding:16px 24px;
+    max-width:900px;
+    width:100%;
+    text-align:center;
+    box-shadow:
+        0 6px 20px rgba(0,0,0,.3),
+        inset 0 0 0 2px rgba(255,255,255,.4);
+    position:relative;
+    margin-bottom:10px;
+}
+
+.sentence-text{
+    font-size:clamp(18px,2.5vw,32px);
+    font-weight:700;
+    color:#3e1f0a;
+    line-height:1.4;
+}
+
+/* =========================================================
+   BOWL CONTAINER
+   ========================================================= */
+.bowls-area{
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:10px;
+    position:relative;
+    min-height:120px;
+}
+
+/* Instruction */
+.instruction{
+    background:
+        linear-gradient(145deg,
+            rgba(255,215,0,.9),
+            rgba(255,165,0,.85)
+        );
+    border:2px solid #8B4513;
+    border-radius:30px;
+    padding:8px 24px;
+    color:#3e1f0a;
+    font-size:clamp(14px,1.8vw,22px);
+    font-weight:700;
+    text-align:center;
+    box-shadow:0 3px 0 #6B4F0A,0 5px 12px rgba(0,0,0,.2);
+    margin-bottom:10px;
+    max-width:100%;
+    white-space:nowrap;
+}
+
+/* =========================================================
+   3D BOWL
+   ========================================================= */
+.bowl-slot{
+    position:relative;
+    width:clamp(55px,8vw,90px);
+    height:clamp(65px,9vw,105px);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+}
+
+.bowl{
+    position:relative;
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+}
+
+/* Bowl shape */
+.bowl-body{
+    width:100%;
+    height:75%;
+    background:
+        linear-gradient(
+            180deg,
+            #f5f0e0 0%,
+            #e8dcc0 30%,
+            #d4c4a0 70%,
+            #c0a878 100%
+        );
+    border-radius:0 0 50% 50% / 0 0 70% 70%;
+    border:3px solid #8B6914;
+    border-top:none;
+    position:relative;
+    box-shadow:
+        inset 0 8px 16px rgba(255,255,255,.4),
+        inset 0 -4px 12px rgba(0,0,0,.15),
+        0 6px 12px rgba(0,0,0,.25);
+    overflow:hidden;
+}
+
+/* Bowl rim */
+.bowl-rim{
+    position:absolute;
+    top:-4px;
+    left:-6px;
+    right:-6px;
+    height:14px;
+    background:
+        linear-gradient(180deg,
+            #d4a843,
+            #c09430,
+            #a07820
+        );
+    border-radius:50%;
+    border:2px solid #8B6914;
+    box-shadow:
+        0 2px 4px rgba(0,0,0,.2),
+        inset 0 2px 4px rgba(255,255,255,.3);
+}
+
+/* Bowl shine */
+.bowl-shine{
+    position:absolute;
+    top:12%;
+    left:15%;
+    width:30%;
+    height:25%;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.45),
+            transparent
+        );
+    border-radius:50%;
+    pointer-events:none;
+}
+
+/* Letter inside bowl */
+.bowl-letter{
+    position:absolute;
+    bottom:15%;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:clamp(22px,3.5vw,38px);
+    font-weight:900;
+    color:#3e1f0a;
+    text-shadow:0 2px 4px rgba(0,0,0,.15);
+    opacity:0;
+    transition:opacity .3s;
+    z-index:3;
+}
+
+.bowl-letter.visible{
+    opacity:1;
+    animation:bowlLetterDrop .4s ease-out;
+}
+
+@keyframes bowlLetterDrop{
+    0%{ transform:translateX(-50%) translateY(-60px) scale(1.3); opacity:0; }
+    60%{ transform:translateX(-50%) translateY(5px) scale(.95); opacity:1; }
+    100%{ transform:translateX(-50%) translateY(0) scale(1); opacity:1; }
+}
+
+/* Bowl number label */
+.bowl-number{
+    position:absolute;
+    bottom:-8px;
+    left:50%;
+    transform:translateX(-50%);
+    background:
+        linear-gradient(145deg,#8B4513,#5a3010);
+    color:#ffd700;
+    font-size:clamp(10px,1.2vw,14px);
+    font-weight:900;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:2px solid #ffd700;
+    box-shadow:0 2px 4px rgba(0,0,0,.3);
+    z-index:4;
+}
+
+/* Splash animation */
+.splash{
+    position:absolute;
+    top:5px;
+    left:50%;
+    transform:translateX(-50%);
+    width:100%;
+    height:40px;
+    pointer-events:none;
+    z-index:5;
+}
+
+.splash-drop{
+    position:absolute;
+    width:8px;
+    height:8px;
+    background:rgba(30,144,255,.7);
+    border-radius:50%;
+    opacity:0;
+}
+
+.splash-drop.active{
+    animation:splashUp .6s ease-out forwards;
+}
+
+.splash-drop:nth-child(1){ left:30%; animation-delay:0s; }
+.splash-drop:nth-child(2){ left:50%; animation-delay:.05s; }
+.splash-drop:nth-child(3){ left:70%; animation-delay:.1s; }
+.splash-drop:nth-child(4){ left:20%; animation-delay:.08s; }
+.splash-drop:nth-child(5){ left:80%; animation-delay:.03s; }
+
+@keyframes splashUp{
+    0%{
+        opacity:1;
+        transform:translateY(0) scale(1);
+    }
+    50%{
+        opacity:.8;
+        transform:translateY(-25px) scale(1.2);
+    }
+    100%{
+        opacity:0;
+        transform:translateY(-15px) scale(.6);
+    }
+}
+
+/* Active bowl highlight */
+.bowl-slot.active .bowl-body{
+    border-color:#ffd700;
+    box-shadow:
+        inset 0 8px 16px rgba(255,255,255,.4),
+        inset 0 -4px 12px rgba(0,0,0,.15),
+        0 0 20px rgba(255,215,0,.5),
+        0 6px 12px rgba(0,0,0,.25);
+}
+
+/* Completed bowl */
+.bowl-slot.completed .bowl-body{
+    background:
+        linear-gradient(
+            180deg,
+            #d8ffdf 0%,
+            #b8f0c0 30%,
+            #90d898 70%,
+            #70c078 100%
+        );
+    border-color:#30b856;
+}
+
+.bowl-slot.completed .bowl-letter{
+    color:#16853a;
+}
+
+/* Wrong bowl shake */
+.bowl-slot.wrong .bowl-body{
+    animation:bowlShake .5s ease;
+}
+
+@keyframes bowlShake{
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-6px); }
+    40%{ transform:translateX(6px); }
+    60%{ transform:translateX(-4px); }
+    80%{ transform:translateX(4px); }
+}
+
+/* =========================================================
+   LETTER TILES
+   ========================================================= */
+.letters-area{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    z-index:50;
+    padding:12px 16px 16px;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(139,69,19,.85),
+            rgba(101,67,33,.95)
+        );
+    border-top:3px solid #8B4513;
+    box-shadow:0 -4px 16px rgba(0,0,0,.4);
+}
+
+.letters-container{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:clamp(8px,1.5vw,16px);
+    flex-wrap:wrap;
+    max-width:900px;
+    margin:0 auto;
+}
+
+.letter-tile{
+    width:clamp(50px,7vw,80px);
+    height:clamp(50px,7vw,80px);
+    border-radius:14px;
+    border:3px solid #8B6914;
+    background:
+        linear-gradient(
+            145deg,
+            #fff8e7,
+            #f0e0b0
+        );
+    color:#3e1f0a;
+    font-size:clamp(22px,3.5vw,38px);
+    font-weight:900;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    user-select:none;
+    box-shadow:
+        0 5px 0 #a07820,
+        0 8px 16px rgba(0,0,0,.25);
+    transition:
+        transform .15s ease,
+        box-shadow .15s ease,
+        opacity .25s ease;
+    position:relative;
+    z-index:2;
+}
+
+.letter-tile:hover{
+    transform:translateY(-4px);
+    box-shadow:
+        0 9px 0 #a07820,
+        0 12px 20px rgba(0,0,0,.3);
+}
+
+.letter-tile:active{
+    transform:translateY(3px);
+    box-shadow:
+        0 2px 0 #a07820,
+        0 4px 8px rgba(0,0,0,.2);
+}
+
+.letter-tile.used{
+    opacity:.25;
+    cursor:not-allowed;
+    transform:none;
+    box-shadow:none;
+}
+
+.letter-tile.wrong{
+    animation:tileWrong .5s ease;
+}
+
+@keyframes tileWrong{
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-8px) rotate(-3deg); }
+    40%{ transform:translateX(8px) rotate(3deg); }
+    60%{ transform:translateX(-5px); }
+    80%{ transform:translateX(5px); }
+}
+
+/* Flying letter animation */
+.flying-letter{
+    position:fixed;
+    z-index:200;
+    font-size:clamp(28px,4vw,44px);
+    font-weight:900;
+    color:#3e1f0a;
+    text-shadow:0 2px 6px rgba(0,0,0,.3);
+    pointer-events:none;
+    transition:none;
+}
+
+/* =========================================================
+   SHOUTING LETTER DISPLAY
+   ========================================================= */
+.shout-letter{
+    position:fixed;
+    z-index:150;
+    left:8%;
+    bottom:42%;
+    width:clamp(70px,9vw,110px);
+    height:clamp(70px,9vw,110px);
+    border-radius:50%;
+    background:linear-gradient(145deg,#ffd700,#ffaa00);
+    border:4px solid #fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:clamp(36px,5vw,56px);
+    font-weight:900;
+    color:#3e1f0a;
+    text-shadow:0 3px 6px rgba(0,0,0,.2);
+    box-shadow:
+        0 0 30px rgba(255,215,0,.6),
+        0 8px 20px rgba(0,0,0,.3),
+        inset 0 -4px 8px rgba(0,0,0,.1);
+    opacity:0;
+    transform:scale(0.3);
+    transition:all .35s cubic-bezier(.34,1.56,.64,1);
+    pointer-events:none;
+}
+
+.shout-letter.show{
+    opacity:1;
+    transform:scale(1);
+    animation:shoutPulse .8s ease-in-out infinite alternate;
+}
+
+.shout-letter.hiding{
+    opacity:0;
+    transform:scale(0.3) rotate(15deg);
+}
+
+@keyframes shoutPulse{
+    from{ transform:scale(1); box-shadow:0 0 30px rgba(255,215,0,.6),0 8px 20px rgba(0,0,0,.3); }
+    to{ transform:scale(1.08); box-shadow:0 0 50px rgba(255,215,0,.8),0 8px 24px rgba(0,0,0,.35); }
+}
+
+/* Instruction text */
+.instruction-shout{
+    background:linear-gradient(145deg,rgba(255,215,0,.9),rgba(255,165,0,.85));
+    border:2px solid #8B4513;
+    border-radius:30px;
+    padding:8px 24px;
+    color:#3e1f0a;
+    font-size:clamp(14px,1.8vw,22px);
+    font-weight:700;
+    text-align:center;
+    box-shadow:0 3px 0 #6B4F0A,0 5px 12px rgba(0,0,0,.2);
+    margin-bottom:10px;
+    max-width:100%;
+    white-space:nowrap;
+}
+
+/* Bowl clickable highlight */
+.bowl-slot.clickable .bowl-body{
+    border-color:#ffd700;
+    box-shadow:
+        inset 0 8px 16px rgba(255,255,255,.4),
+        inset 0 -4px 12px rgba(0,0,0,.15),
+        0 0 20px rgba(255,215,0,.5),
+        0 6px 12px rgba(0,0,0,.25);
+    cursor:pointer;
+    animation:bowlGlow 1s ease-in-out infinite alternate;
+}
+
+@keyframes bowlGlow{
+    from{ box-shadow:inset 0 8px 16px rgba(255,255,255,.4),inset 0 -4px 12px rgba(0,0,0,.15),0 0 15px rgba(255,215,0,.4),0 6px 12px rgba(0,0,0,.25); }
+    to{ box-shadow:inset 0 8px 16px rgba(255,255,255,.4),inset 0 -4px 12px rgba(0,0,0,.15),0 0 30px rgba(255,215,0,.7),0 6px 12px rgba(0,0,0,.25); }
+}
+
+/* =========================================================
+   FEEDBACK POPUP
+   ========================================================= */
+.feedback{
+    position:fixed;
+    inset:0;
+    z-index:500;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    visibility:hidden;
+    transition:.25s;
+}
+
+.feedback.show{
+    opacity:1;
+    visibility:visible;
+}
+
+.feedback-card{
+    width:min(420px,88vw);
+    padding:30px;
+    text-align:center;
+    border-radius:28px;
+    background:#fff;
+    box-shadow:0 20px 60px rgba(0,0,0,.35);
+    transform:scale(.6);
+    transition:.3s;
+}
+
+.feedback.show .feedback-card{
+    transform:scale(1);
+}
+
+.feedback-emoji{
+    font-size:80px;
+    line-height:1;
+}
+
+.feedback-title{
+    margin:10px 0 5px;
+    color:#173e7b;
+    font-size:32px;
+    font-weight:900;
+}
+
+.feedback-text{
+    color:#4b5d78;
+    font-size:18px;
+    font-weight:700;
+}
+
+/* Correct popup */
+.feedback.correct .feedback-card{
+    border:4px solid #2ac45c;
+    animation:popCorrect .4s ease;
+}
+
+.feedback.correct .feedback-title{
+    color:#16833c;
+}
+
+/* Wrong popup */
+.feedback.wrong .feedback-card{
+    border:4px solid #ff5b6e;
+    animation:popWrong .5s ease;
+}
+
+.feedback.wrong .feedback-title{
+    color:#dc2441;
+}
+
+@keyframes popCorrect{
+    0%{ transform:scale(.6); opacity:0; }
+    70%{ transform:scale(1.08); opacity:1; }
+    100%{ transform:scale(1); opacity:1; }
+}
+
+@keyframes popWrong{
+    0%,100%{ transform:scale(1) translateX(0); }
+    20%{ transform:scale(1.03) translateX(-8px); }
+    40%{ transform:scale(1.03) translateX(8px); }
+    60%{ transform:scale(1.02) translateX(-5px); }
+    80%{ transform:scale(1.01) translateX(5px); }
+}
+
+/* Final popup */
+.feedback.final .feedback-card{
+    border:5px solid #ffd700;
+    animation:finalPop .6s cubic-bezier(.2,.8,.2,1);
+}
+
+.feedback.final .feedback-emoji{
+    font-size:100px;
+    animation:finalEmoji .7s ease-in-out infinite alternate;
+}
+
+.feedback.final .feedback-title{
+    font-size:38px;
+    color:#3e1f0a;
+}
+
+.final-score{
+    display:inline-block;
+    margin-top:10px;
+    padding:8px 22px;
+    border-radius:16px;
+    background:#e7ffea;
+    color:#16853c;
+    font-size:28px;
+    font-weight:900;
+}
+
+.play-again{
+    display:none;
+    margin-top:18px;
+    min-width:180px;
+    padding:12px 24px;
+    border:0;
+    border-radius:14px;
+    background:linear-gradient(145deg,#e74c3c,#c0392b);
+    color:#fff;
+    font-family:inherit;
+    font-size:20px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 5px 0 #96281b;
+    transition:transform .15s;
+}
+
+.play-again:hover{ transform:translateY(-2px); }
+.play-again:active{ transform:translateY(3px); box-shadow:0 2px 0 #96281b; }
+
+@keyframes finalPop{
+    0%{ transform:scale(.4) rotate(-3deg); opacity:0; }
+    60%{ transform:scale(1.06) rotate(1deg); opacity:1; }
+    100%{ transform:scale(1) rotate(0); opacity:1; }
+}
+
+@keyframes finalEmoji{
+    from{ transform:scale(1); }
+    to{ transform:scale(1.12) rotate(3deg); }
+}
+
+/* =========================================================
+   CONFETTI
+   ========================================================= */
+.confetti{
+    position:fixed;
+    z-index:1000;
+    top:-20px;
+    width:10px;
+    height:16px;
+    border-radius:2px;
+    animation:confettiFall 1.8s linear forwards;
+}
+
+@keyframes confettiFall{
+    to{
+        transform:translate(var(--x),100vh) rotate(720deg);
+        opacity:0;
+    }
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media(max-width:768px){
+    .hud{ padding:8px 12px; }
+    .hud-item{ padding:4px 10px; font-size:13px; }
+    .hud-item .icon{ font-size:16px; }
+    .hud-back,.hud-sound{ width:36px; height:36px; font-size:16px; }
+
+    .quest-banner{ padding:6px 18px; font-size:14px; letter-spacing:2px; }
+    .sentence-card{ padding:12px 16px; }
+    .sentence-text{ font-size:16px; }
+    .instruction{ padding:6px 16px; font-size:13px; }
+
+    .bowl-slot{ width:45px; height:55px; }
+    .bowl-number{ width:20px; height:20px; font-size:9px; }
+
+    .letters-area{ padding:8px 10px 12px; }
+    .letter-tile{ width:44px; height:44px; font-size:20px; border-radius:10px; }
+
+    .character{ display:none; }
+
+    .tree-1,.tree-2,.tree-3,.tree-4{ display:none; }
+}
+
+@media(max-width:480px){
+    .hud-center{ display:none; }
+    .bowls-area{ gap:6px; }
+    .bowl-slot{ width:40px; height:50px; }
+    .letter-tile{ width:40px; height:40px; font-size:18px; }
+    .sentence-text{ font-size:14px; }
+}
+
+@media(max-width:380px){
+    .bowls-area{ gap:4px; min-height:80px; }
+    .bowl-slot{ width:34px; height:44px; }
+    .bowl-rim{ height:10px; }
+    .bowl-number{ width:18px; height:18px; font-size:8px; bottom:-6px; }
+    .letter-tile{ width:36px; height:36px; font-size:16px; border-radius:8px; }
+}
+
+@media(min-width:1200px){
+    .bowls-area{ gap:16px; }
+    .bowl-slot{ width:100px; height:120px; }
+    .bowl-number{ width:28px; height:28px; font-size:15px; }
+    .letter-tile{ width:90px; height:90px; font-size:42px; border-radius:16px; }
+}
+
+@media(min-width:1600px){
+    .bowl-slot{ width:110px; height:130px; }
+    .letter-tile{ width:100px; height:100px; font-size:46px; }
+}
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="game-wrapper">
+
+    <!-- Clouds -->
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+
+    <!-- Trees -->
+    <div class="tree tree-1">
+        <div class="tree-top"></div>
+        <div class="tree-trunk"></div>
+    </div>
+    <div class="tree tree-2">
+        <div class="tree-top"></div>
+        <div class="tree-trunk"></div>
+    </div>
+    <div class="tree tree-3">
+        <div class="tree-top"></div>
+        <div class="tree-trunk"></div>
+    </div>
+    <div class="tree tree-4">
+        <div class="tree-top"></div>
+        <div class="tree-trunk"></div>
+    </div>
+
+    <!-- Character on Boat -->
+    <div class="character">
+        <div class="character-body">
+            <svg width="50" height="70" viewBox="0 0 50 70">
+                <!-- Head -->
+                <circle cx="25" cy="15" r="13" fill="#f5c6a0"/>
+                <!-- Hair -->
+                <path d="M12 12 Q15 2 25 5 Q35 2 38 12 Q38 8 30 6 Q20 6 12 12Z" fill="#5a3a1a"/>
+                <!-- Eyes -->
+                <circle cx="20" cy="14" r="2" fill="#2d1a0e"/>
+                <circle cx="30" cy="14" r="2" fill="#2d1a0e"/>
+                <!-- Smile -->
+                <path d="M20 20 Q25 25 30 20" stroke="#c0392b" fill="none" stroke-width="1.5" stroke-linecap="round"/>
+                <!-- Body -->
+                <rect x="18" y="28" width="14" height="20" rx="4" fill="#3498db"/>
+                <!-- Arms -->
+                <line x1="18" y1="32" x2="8" y2="40" stroke="#f5c6a0" stroke-width="4" stroke-linecap="round"/>
+                <line x1="32" y1="32" x2="42" y2="40" stroke="#f5c6a0" stroke-width="4" stroke-linecap="round"/>
+                <!-- Flag -->
+                <line x1="42" y1="38" x2="42" y2="10" stroke="#8B4513" stroke-width="2"/>
+                <polygon points="42,10 55,15 42,20" fill="#e74c3c"/>
+            </svg>
+        </div>
+        <div class="boat">
+        </div>
+    </div>
+
+    <!-- Water -->
+    <div class="water">
+        <div class="wave wave-1"></div>
+        <div class="wave wave-2"></div>
+    </div>
+</div>
+
+<!-- HUD -->
+<div class="hud">
+    <div class="hud-left">
+        <a class="hud-back" href="../EVS_Index.html" title="Menu">←</a>
+    </div>
+    <div class="hud-center">
+        <div class="hud-item">
+            <span class="icon">⭐</span>
+            <span id="scoreDisplay">0</span>
+        </div>
+        <div class="hud-item">
+            <span class="icon">🏆</span>
+            <span id="comboDisplay">x0</span>
+        </div>
+        <div class="hud-item">
+            <span class="icon">❓</span>
+            <span id="questionCount">1/5</span>
+        </div>
+    </div>
+    <div class="hud-right">
+        <div class="hearts" id="heartsContainer">
+            <span class="heart">❤️</span>
+            <span class="heart">❤️</span>
+            <span class="heart">❤️</span>
+        </div>
+        <button class="hud-sound" id="soundBtn" title="Sound">🔊</button>
+    </div>
+</div>
+
+<!-- Question Area -->
+<div class="question-area" id="questionArea">
+
+    <!-- Quest Banner -->
+    <div class="quest-banner">⚔️ Adventure Quest!</div>
+
+    <!-- Sentence Card -->
+    <div class="sentence-card">
+        <div class="sentence-text" id="sentenceText"></div>
+    </div>
+
+    <!-- Bowls -->
+    <div class="bowls-area" id="bowlsArea"></div>
+
+    <!-- Instruction -->
+    <div class="instruction" id="instructionText">🎯 Tap a bowl to place the letter!</div>
+
+</div>
+
+<!-- Shouting Letter Display -->
+<div class="shout-letter" id="shoutLetter"></div>
+
+<!-- Letters Area -->
+<div class="letters-area">
+    <div class="letters-container" id="lettersContainer"></div>
+</div>
+
+<!-- Feedback Popup -->
+<div class="feedback" id="feedback">
+    <div class="feedback-card">
+        <div class="feedback-emoji" id="feedbackEmoji">😊</div>
+        <h2 class="feedback-title" id="feedbackTitle">Correct!</h2>
+        <p class="feedback-text" id="feedbackText">Great job!</p>
+        <button class="play-again" id="playAgainBtn" style="display:none;">🔄 Play Again</button>
+    </div>
+</div>
+
+<script>
+
+/* =========================================================
+   QUIZ DATA
+   ========================================================= */
+const quizData = [
+    {
+        questionBefore: "Eyes, ears, nose, tongue and skin are called the",
+        questionAfter: ".",
+        answer: "SENSEORGANS",
+        image: "../assets/images/sense-organs.png"
+    },
+    {
+        questionBefore: "Each part of our body has different",
+        questionAfter: "to perform.",
+        answer: "FUNCTIONS",
+        image: "../assets/images/body.png"
+    },
+    {
+        questionBefore: "We must wipe our body with a clean",
+        questionAfter: ".",
+        answer: "TOWEL",
+        image: "../assets/images/body-part.png"
+    },
+    {
+        questionBefore: "The",
+        questionAfter: "is the sense organ that helps us to taste.",
+        answer: "TONGUE",
+        image: "../assets/images/tongue.png"
+    },
+    {
+        questionBefore: "We must oil and comb our",
+        questionAfter: "daily.",
+        answer: "HAIR",
+        image: "../assets/images/body.png"
+    }
+];
+
+/* =========================================================
+   STATE
+   ========================================================= */
+let currentQuestion = 0;
+let currentAnswer = [];
+let score = 0;
+let combo = 0;
+let hearts = 3;
+let completed = new Array(quizData.length).fill(false);
+let locked = false;
+let soundEnabled = true;
+let speaking = false;
+
+let shuffledLetters = [];
+let currentLetterIndex = 0;
+
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+const sentenceText = document.getElementById("sentenceText");
+const bowlsArea = document.getElementById("bowlsArea");
+const lettersContainer = document.getElementById("lettersContainer");
+const scoreDisplay = document.getElementById("scoreDisplay");
+const comboDisplay = document.getElementById("comboDisplay");
+const questionCount = document.getElementById("questionCount");
+const heartsContainer = document.getElementById("heartsContainer");
+const feedback = document.getElementById("feedback");
+const feedbackEmoji = document.getElementById("feedbackEmoji");
+const feedbackTitle = document.getElementById("feedbackTitle");
+const feedbackText = document.getElementById("feedbackText");
+const playAgainBtn = document.getElementById("playAgainBtn");
+const soundBtn = document.getElementById("soundBtn");
+const shoutLetter = document.getElementById("shoutLetter");
+const instructionText = document.getElementById("instructionText");
+const lettersArea = document.querySelector(".letters-area");
+
+/* =========================================================
+   SHUFFLE
+   ========================================================= */
+function shuffle(arr){
+    const copy = [...arr];
+    for(let i = copy.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+}
+
+/* =========================================================
+   SOUND
+   ========================================================= */
+function playSound(type){
+    if(!soundEnabled) return;
+
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return;
+
+    const ctx = new AC();
+
+    if(type === "correct"){
+        [620, 780, 940].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine";
+            osc.frequency.value = freq;
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            const t = ctx.currentTime + i * .08;
+            gain.gain.setValueAtTime(.001, t);
+            gain.gain.exponentialRampToValueAtTime(.15, t + .02);
+            gain.gain.exponentialRampToValueAtTime(.001, t + .2);
+            osc.start(t);
+            osc.stop(t + .22);
+        });
+    } else if(type === "wrong"){
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(200, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + .25);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        gain.gain.setValueAtTime(.12, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .3);
+        osc.start();
+        osc.stop(ctx.currentTime + .35);
+    } else if(type === "splash"){
+        [400, 500, 600].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine";
+            osc.frequency.value = freq;
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            const t = ctx.currentTime + i * .03;
+            gain.gain.setValueAtTime(.001, t);
+            gain.gain.exponentialRampToValueAtTime(.08, t + .01);
+            gain.gain.exponentialRampToValueAtTime(.001, t + .15);
+            osc.start(t);
+            osc.stop(t + .17);
+        });
+    } else if(type === "throw"){
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(300, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + .12);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        gain.gain.setValueAtTime(.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .15);
+        osc.start();
+        osc.stop(ctx.currentTime + .18);
+    } else if(type === "shout"){
+        [500, 700, 900].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "triangle";
+            osc.frequency.value = freq;
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            const t = ctx.currentTime + i * .04;
+            gain.gain.setValueAtTime(.001, t);
+            gain.gain.exponentialRampToValueAtTime(.12, t + .02);
+            gain.gain.exponentialRampToValueAtTime(.001, t + .12);
+            osc.start(t);
+            osc.stop(t + .14);
+        });
+    } else if(type === "final"){
+        [523, 659, 784, 1046].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine";
+            osc.frequency.value = freq;
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            const t = ctx.currentTime + i * .12;
+            gain.gain.setValueAtTime(.001, t);
+            gain.gain.exponentialRampToValueAtTime(.18, t + .03);
+            gain.gain.exponentialRampToValueAtTime(.001, t + .25);
+            osc.start(t);
+            osc.stop(t + .28);
+        });
+    }
+}
+
+/* =========================================================
+   CONFETTI
+   ========================================================= */
+function createConfetti(amount){
+    const colors = ["#ff4d6d","#ffd43b","#31c76a","#4da3ff","#a85ee8","#ff8c42"];
+    for(let i = 0; i < amount; i++){
+        const piece = document.createElement("div");
+        piece.className = "confetti";
+        piece.style.left = Math.random() * 100 + "vw";
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.setProperty("--x", (Math.random() * 400 - 200) + "px");
+        piece.style.animationDelay = Math.random() * .25 + "s";
+        document.body.appendChild(piece);
+        setTimeout(() => piece.remove(), 2200);
+    }
+}
+
+/* =========================================================
+   SPEECH
+   ========================================================= */
+function speak(text){
+    if(!soundEnabled || !("speechSynthesis" in window)) return;
+    speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.rate = .85;
+    utter.pitch = 1.05;
+    utter.onstart = () => { speaking = true; };
+    utter.onend = () => { speaking = false; };
+    speechSynthesis.speak(utter);
+}
+
+/* =========================================================
+   SHOUT LETTER
+   ========================================================= */
+function showShoutLetter(letter){
+    shoutLetter.textContent = letter;
+    shoutLetter.classList.remove("hiding");
+    shoutLetter.classList.add("show");
+    playSound("shout");
+}
+
+function hideShoutLetter(){
+    shoutLetter.classList.remove("show");
+    shoutLetter.classList.add("hiding");
+}
+
+function showNextLetter(){
+    if(currentLetterIndex >= shuffledLetters.length){
+        hideShoutLetter();
+        return;
+    }
+    showShoutLetter(shuffledLetters[currentLetterIndex]);
+}
+
+/* =========================================================
+   LOAD QUESTION
+   ========================================================= */
+function loadQuestion(){
+    const data = quizData[currentQuestion];
+
+    currentAnswer = new Array(data.answer.length).fill("");
+    currentLetterIndex = 0;
+    shuffledLetters = shuffle(data.answer.split(""));
+
+    questionCount.textContent = (currentQuestion + 1) + "/" + quizData.length;
+
+    // Sentence
+    sentenceText.innerHTML = "";
+    const before = document.createTextNode(data.questionBefore + " ");
+    sentenceText.appendChild(before);
+
+    // Bowls
+    bowlsArea.innerHTML = "";
+    data.answer.split("").forEach((letter, i) => {
+        const slot = document.createElement("div");
+        slot.className = "bowl-slot";
+        slot.dataset.index = i;
+
+        slot.innerHTML = `
+            <div class="bowl">
+                <div class="bowl-rim"></div>
+                <div class="bowl-body">
+                    <div class="bowl-shine"></div>
+                </div>
+                <div class="splash">
+                    <div class="splash-drop"></div>
+                    <div class="splash-drop"></div>
+                    <div class="splash-drop"></div>
+                    <div class="splash-drop"></div>
+                    <div class="splash-drop"></div>
+                </div>
+                <div class="bowl-letter" id="bowlLetter${i}"></div>
+            </div>
+            <div class="bowl-number">${i + 1}</div>
+        `;
+
+        // Click handler for each bowl
+        slot.addEventListener("click", () => handleBowlClick(i));
+
+        bowlsArea.appendChild(slot);
+    });
+
+    const after = document.createTextNode(" " + data.questionAfter);
+    sentenceText.appendChild(after);
+
+    // Hide letter tiles area (not needed anymore)
+    lettersArea.style.display = "none";
+
+    // Update HUD
+    scoreDisplay.textContent = score;
+    comboDisplay.textContent = "x" + combo;
+    updateHearts();
+
+    // Speak the question
+    speak("Question " + (currentQuestion + 1) + ". " +
+        data.questionBefore + " blank " + data.questionAfter);
+
+    // Show first letter after a short delay
+    instructionText.textContent = "🎯 Tap a bowl to place the letter!";
+    setTimeout(() => showNextLetter(), 800);
+}
+
+/* =========================================================
+   HANDLE BOWL CLICK
+   ========================================================= */
+function handleBowlClick(bowlIndex){
+    if(locked) return;
+    if(currentLetterIndex >= shuffledLetters.length) return;
+
+    const data = quizData[currentQuestion];
+    const answer = data.answer;
+
+    // If this bowl already has a letter, ignore
+    if(currentAnswer[bowlIndex] !== "") return;
+
+    const shoutedLetter = shuffledLetters[currentLetterIndex];
+
+    // Check if the letter is correct for this bowl position
+    if(shoutedLetter !== answer[bowlIndex]){
+        // WRONG POSITION
+        locked = true;
+        playSound("wrong");
+
+        const slot = bowlsArea.children[bowlIndex];
+        slot.classList.add("wrong");
+        setTimeout(() => slot.classList.remove("wrong"), 500);
+
+        showFeedback("wrong", "😢", "Oops!", "Wrong place! Try another bowl.");
+        combo = 0;
+        comboDisplay.textContent = "x" + combo;
+        loseHeart();
+
+        setTimeout(() => {
+            locked = false;
+        }, 800);
+        return;
+    }
+
+    // CORRECT POSITION!
+    locked = true;
+    hideShoutLetter();
+
+    // Animate flying letter from shout bubble to bowl
+    const shoutRect = shoutLetter.getBoundingClientRect();
+    const slot = bowlsArea.children[bowlIndex];
+    const slotRect = slot.getBoundingClientRect();
+
+    const flyEl = document.createElement("div");
+    flyEl.className = "flying-letter";
+    flyEl.textContent = shoutedLetter;
+    flyEl.style.left = shoutRect.left + shoutRect.width / 2 - 20 + "px";
+    flyEl.style.top = shoutRect.top + "px";
+    document.body.appendChild(flyEl);
+
+    playSound("throw");
+
+    requestAnimationFrame(() => {
+        flyEl.style.transition = "all .4s cubic-bezier(.2,.8,.3,1)";
+        flyEl.style.left = slotRect.left + slotRect.width / 2 - 20 + "px";
+        flyEl.style.top = slotRect.top + "px";
+        flyEl.style.transform = "scale(1.3)";
+        flyEl.style.opacity = ".9";
+    });
+
+    setTimeout(() => {
+        flyEl.remove();
+
+        // Place letter in bowl
+        currentAnswer[bowlIndex] = shoutedLetter;
+        const bowlLetter = document.getElementById("bowlLetter" + bowlIndex);
+        bowlLetter.textContent = shoutedLetter;
+        bowlLetter.classList.add("visible");
+
+        slot.classList.add("completed");
+
+        playSound("splash");
+
+        // Trigger splash
+        const drops = slot.querySelectorAll(".splash-drop");
+        drops.forEach(d => {
+            d.classList.remove("active");
+            void d.offsetWidth;
+            d.classList.add("active");
+        });
+
+        score += 10;
+        scoreDisplay.textContent = score;
+
+        currentLetterIndex++;
+
+        // Check if all letters filled
+        if(currentAnswer.join("") === answer){
+            combo++;
+            comboDisplay.textContent = "x" + combo;
+            score += combo * 5;
+            scoreDisplay.textContent = score;
+
+            playSound("correct");
+            createConfetti(40);
+
+            setTimeout(() => {
+                showFeedback("correct", "🎉", "Excellent!",
+                    "You spelled it right! +" + (10 + combo * 5) + " points");
+            }, 300);
+
+            setTimeout(() => {
+                feedback.classList.remove("show");
+                moveToNext();
+            }, 1800);
+
+            locked = false;
+            return;
+        }
+
+        // Show next shouted letter
+        setTimeout(() => {
+            showNextLetter();
+            locked = false;
+        }, 400);
+
+    }, 420);
+}
+
+/* =========================================================
+   MOVE TO NEXT QUESTION
+   ========================================================= */
+function moveToNext(){
+    completed[currentQuestion] = true;
+
+    if(currentQuestion >= quizData.length - 1){
+        // All done!
+        setTimeout(() => {
+            playSound("final");
+            createConfetti(100);
+            setTimeout(() => createConfetti(80), 300);
+            setTimeout(() => createConfetti(60), 600);
+
+            showFeedback("final", "🏆", "Adventure Complete!",
+                "You answered " + score + " points!");
+
+            playAgainBtn.style.display = "inline-block";
+        }, 500);
+        return;
+    }
+
+    currentQuestion++;
+    loadQuestion();
+}
+
+/* =========================================================
+   FEEDBACK
+   ========================================================= */
+function showFeedback(type, emoji, title, text){
+    feedback.className = "feedback " + type;
+    feedbackEmoji.textContent = emoji;
+    feedbackTitle.textContent = title;
+    feedbackText.textContent = text;
+    playAgainBtn.style.display = "none";
+    feedback.classList.add("show");
+
+    if(type !== "final"){
+        setTimeout(() => {
+            feedback.classList.remove("show");
+        }, 1200);
+    }
+}
+
+/* =========================================================
+   HEARTS
+   ========================================================= */
+function loseHeart(){
+    hearts = Math.max(0, hearts - 1);
+    updateHearts();
+    if(hearts <= 0){
+        setTimeout(() => {
+            showFeedback("final", "💔", "Game Over!",
+                "No hearts left! Score: " + score);
+            playAgainBtn.style.display = "inline-block";
+        }, 900);
+    }
+}
+
+function updateHearts(){
+    const heartsEls = heartsContainer.querySelectorAll(".heart");
+    heartsEls.forEach((h, i) => {
+        h.classList.toggle("lost", i >= hearts);
+    });
+}
+
+/* =========================================================
+   PLAY AGAIN
+   ========================================================= */
+playAgainBtn.addEventListener("click", () => {
+    feedback.classList.remove("show","correct","wrong","final");
+    currentQuestion = 0;
+    score = 0;
+    combo = 0;
+    hearts = 3;
+    completed = new Array(quizData.length).fill(false);
+    locked = false;
+    loadQuestion();
+});
+
+/* =========================================================
+   SOUND TOGGLE
+   ========================================================= */
+soundBtn.addEventListener("click", () => {
+    soundEnabled = !soundEnabled;
+    soundBtn.textContent = soundEnabled ? "🔊" : "🔇";
+    if(!soundEnabled && "speechSynthesis" in window){
+        speechSynthesis.cancel();
+        speaking = false;
+    }
+});
+
+/* =========================================================
+   INIT
+   ========================================================= */
+loadQuestion();
+
+</script>
+
+</body>
+</html>
