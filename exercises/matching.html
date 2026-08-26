@@ -144,13 +144,13 @@ body{font-family:'Fredoka',sans-serif}
 .char-on-bridge{position:absolute;z-index:15;
   transition:left 1.2s cubic-bezier(.25,1.2,.5,1);
   display:flex;flex-direction:column;align-items:center;
-  bottom:52%}
+  bottom:46%}
 .char-on-bridge img{width:clamp(50px,7vw,80px);height:auto;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35))}
 .char-on-bridge.walking{animation:charBounce .6s ease-in-out}
 @keyframes charBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 
 /* RIGHT - DESCRIPTIONS */
-.right-col{display:flex;flex-direction:column;gap:5px;justify-content:flex-end;padding-bottom:38px;
+.right-col{display:flex;flex-direction:column;gap:5px;justify-content:flex-start;padding-top:8px;
   width:clamp(180px,28vw,280px);flex-shrink:0;z-index:25;padding-right:4px}
 .desc-card{background:linear-gradient(145deg,#8B4513 0%,#6a3510 50%,#5a2a08 100%);
   border:3px solid #a07820;border-radius:10px;padding:12px 14px;position:relative;
@@ -367,7 +367,7 @@ function buildCenter(){
   var ch=document.createElement("div");ch.className="char-on-bridge";ch.id="charEl";
   ch.innerHTML='<img src="../assets/images/ladki.png" alt="Girl">';
   ch.style.position="absolute";
-  ch.style.bottom="52%";
+  ch.style.bottom="46%";
   ch.style.left="5%";
   ch.style.zIndex="15";
   centerCol.appendChild(ch);
