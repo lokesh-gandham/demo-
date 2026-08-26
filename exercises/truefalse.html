@@ -41,13 +41,13 @@ body{
 .question-badge{display:inline-flex;align-items:center;gap:6px;
   background:linear-gradient(135deg,#ff9f5a,#f07a2e);color:#fff;
   padding:6px 18px;border-radius:999px;
-  font-family:'Fredoka',sans-serif;font-weight:600;font-size:15px;letter-spacing:.5px;margin-bottom:8px;
+  font-family:'Fredoka',sans-serif;font-weight:500;font-size:15px;letter-spacing:.5px;margin-bottom:8px;
   box-shadow:0 3px 0 rgba(240,122,46,.28)}
-.qtxt,.question-text{font-family:'Fredoka',sans-serif;font-size:clamp(22px,3.5vw,32px);font-weight:600;line-height:1.3;color:#3a2a1f}
+.qtxt,.question-text{font-family:'Fredoka',sans-serif;font-size:clamp(22px,3.5vw,32px);font-weight:500;line-height:1.3;color:#3a2a1f}
 
 .instruction{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:40;text-align:center;
   padding:6px 18px;border-radius:999px;background:rgba(255,159,90,0.92);
-  color:#fff;font-size:15px;font-weight:600;font-family:'Fredoka',sans-serif;white-space:nowrap;
+  color:#fff;font-size:15px;font-weight:400;font-family:'Fredoka',sans-serif;white-space:nowrap;
   box-shadow:0 3px 0 rgba(240,122,46,.28);animation:nudge 2s ease-in-out infinite}
 @keyframes nudge{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-3px)}}
 
@@ -79,14 +79,14 @@ body{
   filter:drop-shadow(0 10px 16px rgba(0,0,0,.35))}
 .stone-body svg{width:100%;height:100%;display:block}
 .stone-face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;z-index:2;pointer-events:none}
-.stone-icon{font-size:clamp(22px,3.4vw,34px);filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));line-height:1}
-.stone-label{font-family:'Nunito',sans-serif;font-size:clamp(20px,3.6vw,34px);font-weight:900;color:#fff;
-  letter-spacing:2px;text-shadow:0 3px 0 rgba(0,0,0,.25),0 6px 12px rgba(0,0,0,.35)}
+.stone-icon{font-size:clamp(22px,3.4vw,34px);filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));line-height:1;font-weight:400}
+.stone-label{font-family:'Nunito',sans-serif;font-size:clamp(20px,3.6vw,34px);font-weight:400;color:#f5f0e0;
+  letter-spacing:2px;text-shadow:0 2px 0 rgba(0,0,0,.4),0 4px 8px rgba(0,0,0,.5)}
 .stone-glow{position:absolute;inset:-8%;border-radius:40%;opacity:0;pointer-events:none;transition:opacity .25s;
   background:radial-gradient(circle,rgba(255,255,255,.35),transparent 65%)}
 .stone:hover:not(.broke) .stone-glow{opacity:1}
-.stone.true .stone-glow{background:radial-gradient(circle,rgba(120,255,140,.4),transparent 65%)}
-.stone.false .stone-glow{background:radial-gradient(circle,rgba(255,120,120,.4),transparent 65%)}
+.stone.true .stone-glow{background:radial-gradient(circle,rgba(180,160,120,.4),transparent 65%)}
+.stone.false .stone-glow{background:radial-gradient(circle,rgba(140,130,110,.4),transparent 65%)}
 
 .stone-crack{position:absolute;inset:0;opacity:0;pointer-events:none;z-index:3}
 .stone.cracking .stone-crack{opacity:1;animation:crackFlash .18s ease-out}
@@ -197,7 +197,7 @@ body{
   .hud-back{padding:5px 12px;font-size:13px;font-weight:800}
   .sound-toggle{width:30px;height:30px;font-size:13px}
   .question-bar{padding:12px 20px}
-  .question-badge{font-size:15px;font-weight:600}
+  .question-badge{font-size:15px;font-weight:500}
 }
 @media(max-width:480px){
   .qtxt,.question-text{font-size:18px}.stone-label{font-size:14px;letter-spacing:1px}
@@ -233,27 +233,37 @@ body{
         <svg viewBox="0 0 200 170" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="tg" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#8fd96a"/>
-              <stop offset="40%" stop-color="#4cb84a"/>
-              <stop offset="100%" stop-color="#2e8a35"/>
+              <stop offset="0%" stop-color="#9a8d7b"/>
+              <stop offset="30%" stop-color="#7a6d5a"/>
+              <stop offset="70%" stop-color="#5a4d3a"/>
+              <stop offset="100%" stop-color="#4a3d2a"/>
             </linearGradient>
             <linearGradient id="tg2" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="rgba(255,255,255,.35)"/>
+              <stop offset="0%" stop-color="rgba(255,255,255,.25)"/>
               <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
             </linearGradient>
+            <filter id="stoneTexture">
+              <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" result="noise"/>
+              <feDiffuseLighting in="noise" lighting-color="#fff" surfaceScale="2" result="light">
+                <feDistantLight azimuth="45" elevation="55"/>
+              </feDiffuseLighting>
+              <feComposite in="SourceGraphic" in2="light" operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/>
+            </filter>
           </defs>
-          <ellipse cx="100" cy="158" rx="72" ry="10" fill="rgba(0,0,0,.18)"/>
-          <path d="M28,48 C22,78 18,110 34,138 C48,158 78,164 102,162 C138,160 168,150 178,124 C188,96 182,62 160,42 C138,22 98,18 68,26 C48,32 32,38 28,48Z" fill="url(#tg)" stroke="#1f6b28" stroke-width="3"/>
-          <path d="M48,40 C70,28 110,26 140,36 C118,34 84,38 58,50Z" fill="url(#tg2)"/>
-          <path d="M55,70 Q72,62 88,74" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="4" stroke-linecap="round"/>
-          <path d="M110,88 Q130,80 148,96" fill="none" stroke="rgba(0,0,0,.1)" stroke-width="3" stroke-linecap="round"/>
-          <circle cx="62" cy="100" r="7" fill="rgba(0,0,0,.08)"/>
-          <circle cx="145" cy="118" r="5" fill="rgba(0,0,0,.07)"/>
+          <ellipse cx="100" cy="158" rx="72" ry="10" fill="rgba(0,0,0,.22)"/>
+          <path d="M28,48 C22,78 18,110 34,138 C48,158 78,164 102,162 C138,160 168,150 178,124 C188,96 182,62 160,42 C138,22 98,18 68,26 C48,32 32,38 28,48Z" fill="url(#tg)" stroke="#3a2d1a" stroke-width="3"/>
+          <path d="M28,48 C22,78 18,110 34,138 C48,158 78,164 102,162 C138,160 168,150 178,124 C188,96 182,62 160,42 C138,22 98,18 68,26 C48,32 32,38 28,48Z" fill="url(#tg2)"/>
+          <path d="M48,40 C70,28 110,26 140,36 C118,34 84,38 58,50Z" fill="rgba(255,255,255,.15)"/>
+          <path d="M55,70 Q72,62 88,74" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="4" stroke-linecap="round"/>
+          <path d="M110,88 Q130,80 148,96" fill="none" stroke="rgba(0,0,0,.15)" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="62" cy="100" r="7" fill="rgba(0,0,0,.1)"/>
+          <circle cx="145" cy="118" r="5" fill="rgba(0,0,0,.08)"/>
+          <path d="M40,55 L45,65 M155,145 L162,150 M170,95 L178,100" fill="none" stroke="rgba(0,0,0,.12)" stroke-width="2" stroke-linecap="round"/>
         </svg>
         <svg class="stone-crack" viewBox="0 0 200 170">
-          <path d="M100,30 L92,70 L110,95 L88,130 L105,155" fill="none" stroke="#1a3d1a" stroke-width="3" stroke-linecap="round"/>
-          <path d="M92,70 L70,85" fill="none" stroke="#1a3d1a" stroke-width="2.5" stroke-linecap="round"/>
-          <path d="M110,95 L135,105" fill="none" stroke="#1a3d1a" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M100,30 L92,70 L110,95 L88,130 L105,155" fill="none" stroke="#2a1d0a" stroke-width="3" stroke-linecap="round"/>
+          <path d="M92,70 L70,85" fill="none" stroke="#2a1d0a" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M110,95 L135,105" fill="none" stroke="#2a1d0a" stroke-width="2.5" stroke-linecap="round"/>
         </svg>
         <div class="stone-face">
           <div class="stone-icon">✅</div>
@@ -268,27 +278,30 @@ body{
         <svg viewBox="0 0 200 170" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="fg" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#e88080"/>
-              <stop offset="40%" stop-color="#d04a4a"/>
-              <stop offset="100%" stop-color="#9a2c2c"/>
+              <stop offset="0%" stop-color="#7a7062"/>
+              <stop offset="30%" stop-color="#625848"/>
+              <stop offset="70%" stop-color="#4a4035"/>
+              <stop offset="100%" stop-color="#3a3028"/>
             </linearGradient>
             <linearGradient id="fg2" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="rgba(255,255,255,.3)"/>
+              <stop offset="0%" stop-color="rgba(255,255,255,.2)"/>
               <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
             </linearGradient>
           </defs>
-          <ellipse cx="100" cy="158" rx="72" ry="10" fill="rgba(0,0,0,.18)"/>
-          <path d="M32,52 C24,80 20,112 38,138 C54,158 84,165 108,162 C144,158 172,146 180,118 C190,88 176,56 152,40 C126,22 90,20 64,30 C48,36 36,44 32,52Z" fill="url(#fg)" stroke="#6b1c1c" stroke-width="3"/>
-          <path d="M50,42 C78,28 118,28 148,40 C120,34 86,38 60,52Z" fill="url(#fg2)"/>
-          <path d="M58,78 Q78,68 96,82" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="4" stroke-linecap="round"/>
-          <path d="M112,92 Q132,84 150,100" fill="none" stroke="rgba(0,0,0,.12)" stroke-width="3" stroke-linecap="round"/>
-          <circle cx="70" cy="112" r="6" fill="rgba(0,0,0,.08)"/>
-          <circle cx="140" cy="70" r="5" fill="rgba(0,0,0,.07)"/>
+          <ellipse cx="100" cy="158" rx="72" ry="10" fill="rgba(0,0,0,.24)"/>
+          <path d="M32,52 C24,80 20,112 38,138 C54,158 84,165 108,162 C144,158 172,146 180,118 C190,88 176,56 152,40 C126,22 90,20 64,30 C48,36 36,44 32,52Z" fill="url(#fg)" stroke="#2a2018" stroke-width="3"/>
+          <path d="M32,52 C24,80 20,112 38,138 C54,158 84,165 108,162 C144,158 172,146 180,118 C190,88 176,56 152,40 C126,22 90,20 64,30 C48,36 36,44 32,52Z" fill="url(#fg2)"/>
+          <path d="M50,42 C78,28 118,28 148,40 C120,34 86,38 60,52Z" fill="rgba(255,255,255,.12)"/>
+          <path d="M58,78 Q78,68 96,82" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="4" stroke-linecap="round"/>
+          <path d="M112,92 Q132,84 150,100" fill="none" stroke="rgba(0,0,0,.14)" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="70" cy="112" r="6" fill="rgba(0,0,0,.1)"/>
+          <circle cx="140" cy="70" r="5" fill="rgba(0,0,0,.09)"/>
+          <path d="M45,60 L50,70 M150,140 L158,148 M165,90 L172,96" fill="none" stroke="rgba(0,0,0,.1)" stroke-width="2" stroke-linecap="round"/>
         </svg>
         <svg class="stone-crack" viewBox="0 0 200 170">
-          <path d="M102,28 L96,68 L118,92 L90,128 L108,156" fill="none" stroke="#4a1010" stroke-width="3" stroke-linecap="round"/>
-          <path d="M96,68 L72,82" fill="none" stroke="#4a1010" stroke-width="2.5" stroke-linecap="round"/>
-          <path d="M118,92 L142,100" fill="none" stroke="#4a1010" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M102,28 L96,68 L118,92 L90,128 L108,156" fill="none" stroke="#1a1008" stroke-width="3" stroke-linecap="round"/>
+          <path d="M96,68 L72,82" fill="none" stroke="#1a1008" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M118,92 L142,100" fill="none" stroke="#1a1008" stroke-width="2.5" stroke-linecap="round"/>
         </svg>
         <div class="stone-face">
           <div class="stone-icon">❌</div>
@@ -351,7 +364,7 @@ body{
   }
 
   function smashFX(x,y,isTrue){
-    var colors=isTrue?["#6ecf55","#3ea640","#a8e080","#2e7d32","#c8f0a8"]:["#e57373","#c62828","#ef9a9a","#8e2424","#ffcdd2"];
+    var colors=isTrue?["#9a8d7b","#7a6d5a","#b8a890","#5a4d3a","#c8b8a0"]:["#7a7062","#625848","#8a8070","#4a4035","#9a9080"];
     var i,el;
     for(i=0;i<18;i++){
       el=document.createElement("div");el.className="shard";
