@@ -1274,6 +1274,8 @@ body{
             <span class="heart">❤️</span>
             <span class="heart">❤️</span>
             <span class="heart">❤️</span>
+            <span class="heart">❤️</span>
+            <span class="heart">❤️</span>
         </div>
         <button class="hud-sound" id="soundBtn" title="Sound">🔊</button>
     </div>
@@ -1294,7 +1296,7 @@ body{
     <div class="bowls-area" id="bowlsArea"></div>
 
     <!-- Instruction -->
-    <div class="instruction" id="instructionText">🎯 Tap a bowl to place the letter!</div>
+    <div class="instruction" id="instructionText">🎯 Select the next word!</div>
 
 </div>
 
@@ -1361,7 +1363,7 @@ let currentQuestion = 0;
 let currentAnswer = [];
 let score = 0;
 let combo = 0;
-let hearts = 3;
+let hearts = 5;
 let completed = new Array(quizData.length).fill(false);
 let locked = false;
 let soundEnabled = true;
@@ -1613,12 +1615,8 @@ function loadQuestion(){
     comboDisplay.textContent = "x" + combo;
     updateHearts();
 
-    // Speak the question
-    speak("Question " + (currentQuestion + 1) + ". " +
-        data.questionBefore + " blank " + data.questionAfter);
-
     // Show first letter after a short delay
-    instructionText.textContent = "🎯 Tap a bowl to place the letter!";
+    instructionText.textContent = "🎯 Select the next word!";
     setTimeout(() => showNextLetter(), 800);
 }
 
@@ -1817,7 +1815,7 @@ playAgainBtn.addEventListener("click", () => {
     currentQuestion = 0;
     score = 0;
     combo = 0;
-    hearts = 3;
+    hearts = 5;
     completed = new Array(quizData.length).fill(false);
     locked = false;
     loadQuestion();

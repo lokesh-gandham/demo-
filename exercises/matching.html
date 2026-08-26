@@ -48,7 +48,7 @@ body{font-family:'Fredoka',sans-serif}
 /* TITLE */
 .title{position:fixed;top:46px;left:50%;transform:translateX(-50%);z-index:50;text-align:center}
 .title-banner{display:inline-block;background:linear-gradient(145deg,#6a3008,#4a2005);border:2px solid #d4a030;border-radius:8px;
-  padding:4px 18px;color:#ffd700;font-size:clamp(12px,1.6vw,17px);font-weight:500;
+  padding:4px 18px;color:#ffd700;font-size:clamp(12px,1.6vw,17px);font-weight:400;
   text-transform:uppercase;letter-spacing:2px;text-shadow:0 2px 4px rgba(0,0,0,.6);
   box-shadow:0 4px 0 #2a1000,0 6px 15px rgba(0,0,0,.35)}
 .title-sub{margin-top:3px;color:#fff;font-size:clamp(11px,1.3vw,14px);font-weight:700;
@@ -57,7 +57,7 @@ body{font-family:'Fredoka',sans-serif}
 /* INSTRUCTION */
 .instruction{position:fixed;top:84px;left:50%;transform:translateX(-50%);z-index:50;
   background:linear-gradient(145deg,#2ecc71,#27ae60);border:2px solid #1e8449;border-radius:8px;
-  padding:4px 14px;color:#fff;font-size:clamp(9px,1.1vw,12px);font-weight:700;
+  padding:6px 18px;color:#fff;font-size:clamp(13px,1.8vw,18px);font-weight:700;
   box-shadow:0 3px 8px rgba(0,0,0,.3);white-space:nowrap;transition:all .3s}
 
 /* GAME AREA */
@@ -144,20 +144,17 @@ body{font-family:'Fredoka',sans-serif}
 .char-on-bridge{position:absolute;z-index:15;
   transition:left 1.2s cubic-bezier(.25,1.2,.5,1);
   display:flex;flex-direction:column;align-items:center;
-  bottom:48%}
-.char-on-bridge img{width:clamp(50px,7vw,80px);height:auto;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35))}
+  bottom:56%}
+.char-on-bridge img{width:clamp(50px,7vw,80px);height:auto;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));display:block;vertical-align:bottom}
 .char-on-bridge.walking{animation:charBounce .6s ease-in-out}
 @keyframes charBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 
 /* RIGHT - DESCRIPTIONS */
-.right-col{display:flex;flex-direction:column;gap:5px;justify-content:flex-start;padding-top:4px;
+.right-col{display:flex;flex-direction:column;gap:5px;justify-content:center;padding-top:0;
   width:clamp(180px,28vw,280px);flex-shrink:0;z-index:25;padding-right:4px}
-.right-label{background:linear-gradient(145deg,#6a3080,#4a2060);color:#ffd700;text-align:center;
-  padding:4px 6px;border-radius:5px;font-size:clamp(8px,1vw,11px);font-weight:700;
-  text-transform:uppercase;letter-spacing:1px;box-shadow:0 2px 5px rgba(0,0,0,.3);flex-shrink:0}
 .desc-card{background:linear-gradient(145deg,#8B4513 0%,#6a3510 50%,#5a2a08 100%);
   border:3px solid #a07820;border-radius:10px;padding:12px 14px;position:relative;
-  min-height:80px;max-height:80px;
+  min-height:70px;
   box-shadow:0 3px 7px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,200,100,.1);
   cursor:pointer;transition:all .25s}
 .desc-card:hover{transform:translateY(-2px);box-shadow:0 4px 10px rgba(0,0,0,.3);border-color:#d4a030}
@@ -371,8 +368,8 @@ function buildCenter(){
   var ch=document.createElement("div");ch.className="char-on-bridge";ch.id="charEl";
   ch.innerHTML='<img src="../assets/images/ladki.png" alt="Girl">';
   ch.style.position="absolute";
-  ch.style.bottom="48%";
-  ch.style.left="5%";
+  ch.style.bottom="56%";
+  ch.style.left="-2%";
   ch.style.zIndex="15";
   centerCol.appendChild(ch);
 }
@@ -385,7 +382,7 @@ function buildPlank(idx){
 function moveChar(){
   var charEl=document.getElementById("charEl");
   if(!charEl)return;
-  var startLeft=5;
+  var startLeft=-2;
   var endLeft=85;
   var range=endLeft-startLeft;
   var leftPos=startLeft+(matched/pairs.length)*range;
@@ -396,7 +393,7 @@ function moveChar(){
 
 function buildGame(){
   leftCol.innerHTML='<div class="left-label">🎯 TAP THESE</div>';
-  rightCol.innerHTML='<div class="right-label">📝 MATCH THESE</div>';
+  rightCol.innerHTML="";
   matched=0;selectedItem=null;
   qD.textContent="0/"+pairs.length;
 
