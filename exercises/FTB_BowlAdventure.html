@@ -23,8 +23,13 @@ html,body{
 
 body{
     font-family:'Fredoka',sans-serif;
-    background:#0a5e2a;
-    color:#2d1a0e;
+    background:
+      radial-gradient(ellipse 75% 45% at 92% -8%, rgba(255,180,90,0.5), transparent 55%),
+      radial-gradient(ellipse 60% 40% at 8% 5%, rgba(255,140,150,0.25), transparent 55%),
+      radial-gradient(ellipse 70% 50% at 50% 105%, rgba(110,210,130,0.2), transparent 55%),
+      linear-gradient(180deg, #ffb39a 0%, #ffc9a0 22%, #ffe2b8 48%, #fff0d6 72%, #eaf8d8 100%);
+    color:#3a2a1f;
+    display:flex;flex-direction:column;
 }
 
 /* =========================================================
@@ -32,9 +37,11 @@ body{
    ========================================================= */
 .game-wrapper{
     position:relative;
-    width:100vw;
-    height:100vh;
+    flex:1;
     overflow:hidden;
+    border-radius:24px;
+    margin:0 48px 18px;
+    box-shadow:0 10px 28px rgba(90,50,20,0.12), inset 0 0 40px rgba(255,255,255,0.25);
 }
 
 /* Sky gradient */
@@ -44,14 +51,8 @@ body{
     inset:0;
     z-index:0;
     background:
-        linear-gradient(
-            180deg,
-            #87CEEB 0%,
-            #a8d8ea 25%,
-            #5bb85b 55%,
-            #3a9a3a 70%,
-            #2d7d2d 100%
-        );
+      radial-gradient(ellipse 60% 50% at 50% 40%, rgba(255,255,255,0.45), transparent 70%),
+      linear-gradient(180deg, rgba(255,232,200,0.55) 0%, rgba(220,245,200,0.55) 100%);
 }
 
 /* Sun glow */
@@ -366,107 +367,70 @@ body{
    HUD BAR
    ========================================================= */
 .hud{
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    z-index:100;
+    position:relative;
+    z-index:80;
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:10px 20px;
-    background:
-        linear-gradient(
-            180deg,
-            rgba(60,30,0,.85),
-            rgba(40,20,0,.75)
-        );
-    border-bottom:3px solid #8B4513;
-    box-shadow:0 4px 12px rgba(0,0,0,.4);
+    gap:10px;
+    flex-wrap:wrap;
+    padding:10px 18px;
+    background:rgba(255,247,239,0.88);
+    backdrop-filter:blur(14px);
+    border-bottom:2px solid rgba(240,122,46,0.22);
+    box-shadow:0 2px 14px rgba(90,50,20,0.08);
 }
 
-.hud-left,
-.hud-center,
-.hud-right{
+.hud .side{
     display:flex;
     align-items:center;
-    gap:12px;
+    gap:10px;
+    flex-wrap:wrap;
 }
 
-.hud-item{
+.hud-chip{
+    background:rgba(255,255,255,0.88);
+    border:2px solid rgba(240,122,46,0.22);
+    border-radius:999px;
+    padding:7px 14px;
+    font-weight:800;
+    font-size:13px;
     display:flex;
     align-items:center;
     gap:6px;
-    padding:6px 14px;
-    border-radius:20px;
-    background:
-        linear-gradient(145deg,rgba(255,255,255,.15),rgba(255,255,255,.05));
-    border:2px solid rgba(255,255,255,.2);
-    color:#fff;
-    font-size:16px;
-    font-weight:700;
-    text-shadow:0 1px 2px rgba(0,0,0,.4);
-}
-
-.hud-item .icon{
-    font-size:20px;
+    color:#3a2a1f;
 }
 
 .hud-back{
-    width:44px;
-    height:44px;
-    border-radius:50%;
-    border:3px solid #ffd700;
-    background:linear-gradient(145deg,#e74c3c,#c0392b);
-    color:#fff;
-    font-size:20px;
-    font-weight:900;
+    background:rgba(255,255,255,0.88);
+    border:2px solid rgba(240,122,46,0.22);
+    color:#3a2a1f;
+    padding:7px 15px;
+    border-radius:999px;
     cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow:0 3px 0 #96281b,0 5px 12px rgba(0,0,0,.3);
-    transition:transform .15s;
+    font-weight:800;
+    font-size:13px;
     text-decoration:none;
-}
-
-.hud-back:hover{ transform:translateY(-2px); }
-.hud-back:active{ transform:translateY(2px); box-shadow:0 1px 0 #96281b; }
-
-.hud-sound{
-    width:44px;
-    height:44px;
-    border-radius:50%;
-    border:3px solid #ffd700;
-    background:linear-gradient(145deg,#f39c12,#e67e22);
-    color:#fff;
-    font-size:20px;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow:0 3px 0 #c0611a,0 5px 12px rgba(0,0,0,.3);
     transition:transform .15s;
 }
 
-.hud-sound:hover{ transform:translateY(-2px); }
-.hud-sound:active{ transform:translateY(2px); }
+.hud-back:hover{ border-color:#f07a2e; color:#f07a2e; background:#fff; }
+.hud-back:active{ transform:translateY(2px); }
 
-/* Hearts */
-.hearts{
-    display:flex;
-    gap:4px;
+.sound-toggle{
+    background:rgba(255,255,255,0.88);
+    border:2px solid rgba(240,122,46,0.22);
+    color:#3a2a1f;
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:15px;
+    transition:transform .15s;
 }
 
-.heart{
-    font-size:22px;
-    transition:transform .3s;
-}
-
-.heart.lost{
-    filter:grayscale(1) opacity(.3);
-    transform:scale(.8);
-}
+.sound-toggle:hover{ transform:translateY(-2px); }
+.sound-toggle:active{ transform:translateY(2px); }
 
 /* =========================================================
    QUESTION SCROLL
@@ -490,22 +454,13 @@ body{
 }
 
 /* Adventure Quest Title Banner */
-.quest-banner{
-    background:
-        linear-gradient(145deg,#8B4513,#654321);
-    border:3px solid #ffd700;
-    border-radius:12px;
-    padding:8px 30px;
-    color:#ffd700;
-    font-size:clamp(16px,2.2vw,26px);
-    font-weight:900;
-    text-transform:uppercase;
-    letter-spacing:3px;
-    text-shadow:0 2px 4px rgba(0,0,0,.5);
-    box-shadow:0 4px 0 #3a1f0a,0 6px 16px rgba(0,0,0,.4);
-    margin-bottom:10px;
-    text-align:center;
-}
+.question-bar{position:relative;z-index:10;width:100%;text-align:center;padding:16px 80px;
+  background:rgba(255,247,239,0.88);backdrop-filter:blur(12px);border-bottom:2px solid rgba(240,122,46,0.22)}
+.question-badge{display:inline-flex;align-items:center;gap:6px;
+  background:linear-gradient(135deg,#ff9f5a,#f07a2e);color:#fff;
+  padding:6px 18px;border-radius:999px;
+  font-family:'Fredoka',sans-serif;font-weight:600;font-size:15px;letter-spacing:.5px;margin-bottom:8px;
+  box-shadow:0 3px 0 rgba(240,122,46,.28)}
 
 /* Question Sentence */
 .sentence-card{
@@ -528,10 +483,11 @@ body{
 }
 
 .sentence-text{
-    font-size:clamp(18px,2.5vw,32px);
-    font-weight:700;
-    color:#3e1f0a;
-    line-height:1.4;
+    font-family:'Fredoka',sans-serif;
+    font-size:clamp(22px,3.5vw,32px);
+    font-weight:600;
+    color:#3a2a1f;
+    line-height:1.3;
 }
 
 /* =========================================================
@@ -796,8 +752,8 @@ body{
     background:
         linear-gradient(
             180deg,
-            rgba(139,69,19,.85),
-            rgba(101,67,33,.95)
+            rgba(101,67,33,.85),
+            rgba(60,30,0,.95)
         );
     border-top:3px solid #8B4513;
     box-shadow:0 -4px 16px rgba(0,0,0,.4);
@@ -1137,13 +1093,13 @@ body{
    ========================================================= */
 @media(max-width:768px){
     .hud{ padding:8px 12px; }
-    .hud-item{ padding:4px 10px; font-size:13px; }
-    .hud-item .icon{ font-size:16px; }
-    .hud-back,.hud-sound{ width:36px; height:36px; font-size:16px; }
+    .hud-chip{ padding:5px 10px; font-size:13px; font-weight:800; }
+    .hud-back{ padding:5px 12px; font-size:13px; font-weight:800; }
+    .sound-toggle{ width:30px; height:30px; font-size:13px; }
 
-    .quest-banner{ padding:6px 18px; font-size:14px; letter-spacing:2px; }
+    .question-badge{ padding:6px 18px; font-size:15px; font-weight:600; letter-spacing:.5px; }
     .sentence-card{ padding:12px 16px; }
-    .sentence-text{ font-size:16px; }
+    .sentence-text{ font-size:clamp(18px,3vw,24px); font-weight:600; }
     .instruction{ padding:6px 16px; font-size:13px; }
 
     .bowl-slot{ width:45px; height:55px; }
@@ -1158,7 +1114,7 @@ body{
 }
 
 @media(max-width:480px){
-    .hud-center{ display:none; }
+    .hud-chip{ display:none; }
     .bowls-area{ gap:6px; }
     .bowl-slot{ width:40px; height:50px; }
     .letter-tile{ width:40px; height:40px; font-size:18px; }
@@ -1252,40 +1208,22 @@ body{
 
 <!-- HUD -->
 <div class="hud">
-    <div class="hud-left">
-        <a class="hud-back" href="../EVS_Index.html" title="Menu">←</a>
+    <div class="side"><a class="hud-back" href="../EVS_Index.html">← Menu</a></div>
+    <div class="side">
+        <div class="hud-chip">⭐ <span id="scoreDisplay">0</span></div>
+        <div class="hud-chip">🔥 <span id="comboDisplay">x0</span></div>
+        <div class="hud-chip" id="qCountDisplay">Q 1/5</div>
     </div>
-    <div class="hud-center">
-        <div class="hud-item">
-            <span class="icon">⭐</span>
-            <span id="scoreDisplay">0</span>
-        </div>
-        <div class="hud-item">
-            <span class="icon">🏆</span>
-            <span id="comboDisplay">x0</span>
-        </div>
-        <div class="hud-item">
-            <span class="icon">❓</span>
-            <span id="questionCount">1/5</span>
-        </div>
-    </div>
-    <div class="hud-right">
-        <div class="hearts" id="heartsContainer">
-            <span class="heart">❤️</span>
-            <span class="heart">❤️</span>
-            <span class="heart">❤️</span>
-            <span class="heart">❤️</span>
-            <span class="heart">❤️</span>
-        </div>
-        <button class="hud-sound" id="soundBtn" title="Sound">🔊</button>
-    </div>
+    <div class="side"><button class="sound-toggle" id="soundBtn">🔊</button></div>
 </div>
 
 <!-- Question Area -->
 <div class="question-area" id="questionArea">
 
     <!-- Quest Banner -->
-    <div class="quest-banner">⚔️ Adventure Quest!</div>
+    <div class="question-bar">
+        <div class="question-badge">📖 Fill in the Blanks</div>
+    </div>
 
     <!-- Sentence Card -->
     <div class="sentence-card">
@@ -1380,7 +1318,7 @@ const bowlsArea = document.getElementById("bowlsArea");
 const lettersContainer = document.getElementById("lettersContainer");
 const scoreDisplay = document.getElementById("scoreDisplay");
 const comboDisplay = document.getElementById("comboDisplay");
-const questionCount = document.getElementById("questionCount");
+const questionCount = document.getElementById("qCountDisplay");
 const heartsContainer = document.getElementById("heartsContainer");
 const feedback = document.getElementById("feedback");
 const feedbackEmoji = document.getElementById("feedbackEmoji");
@@ -1789,18 +1727,11 @@ function showFeedback(type, emoji, title, text){
    HEARTS
    ========================================================= */
 function loseHeart(){
-    hearts = Math.max(0, hearts - 1);
-    updateHearts();
-    if(hearts <= 0){
-        setTimeout(() => {
-            showFeedback("final", "💔", "Game Over!",
-                "No hearts left! Score: " + score);
-            playAgainBtn.style.display = "inline-block";
-        }, 900);
-    }
+    /* Unlimited tries — no game over lockout */
 }
 
 function updateHearts(){
+    if(!heartsContainer) return;
     const heartsEls = heartsContainer.querySelectorAll(".heart");
     heartsEls.forEach((h, i) => {
         h.classList.toggle("lost", i >= hearts);

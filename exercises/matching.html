@@ -9,66 +9,46 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;overflow:hidden;touch-action:manipulation}
-body{font-family:'Fredoka',sans-serif}
-
-.bg{position:fixed;inset:0;z-index:0}
-.sky{position:absolute;top:0;left:0;right:0;bottom:0;
-  background:linear-gradient(180deg,#0f4c8a 0%,#1a6db8 8%,#3a9fd8 18%,#6dc4e8 30%,#a8ddf4 45%,#c8eef8 58%,#ddf5fa 70%,#e8f6fc 85%)}
-.sun{position:absolute;top:3%;right:4%;width:clamp(50px,6vw,80px);height:clamp(50px,6vw,80px);border-radius:50%;
-  background:radial-gradient(circle at 35% 35%,#fffde0,#ffe066 30%,#ffb800 60%,#f09000);
-  box-shadow:0 0 30px 15px rgba(255,200,50,.25);z-index:0}
-.cl{position:absolute;z-index:0;opacity:.7}
-.clb{background:#fff;border-radius:20px;box-shadow:0 2px 6px rgba(0,0,0,.03)}
-.c1{width:clamp(50px,7vw,80px);height:clamp(12px,1.8vw,18px);top:8%;left:-100px;animation:cf 25s linear infinite}
-.c2{width:clamp(35px,5vw,60px);height:clamp(10px,1.4vw,15px);top:16%;left:-70px;animation:cf 32s linear infinite 10s}
-@keyframes cf{from{transform:translateX(0)}to{transform:translateX(calc(100vw + 150px))}}
+body{
+  font-family:'Fredoka',sans-serif;color:#3a2a1f;
+  background:
+    radial-gradient(ellipse 75% 45% at 92% -8%, rgba(255,180,90,0.5), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 8% 5%, rgba(255,140,150,0.25), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 50% 105%, rgba(110,210,130,0.2), transparent 55%),
+    linear-gradient(180deg, #ffb39a 0%, #ffc9a0 22%, #ffe2b8 48%, #fff0d6 72%, #eaf8d8 100%);
+  display:flex;flex-direction:column;
+}
 
 /* HUD */
-.hud{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
-  padding:5px 12px;background:linear-gradient(180deg,rgba(40,20,0,.92),rgba(60,30,5,.88));
-  border-bottom:2px solid #a07820;box-shadow:0 3px 10px rgba(0,0,0,.5)}
-.hs{display:flex;align-items:center;gap:6px}
-.hb{width:32px;height:32px;border-radius:50%;border:2px solid #ffd700;
-  background:linear-gradient(145deg,#e74c3c,#c0392b);color:#fff;font-size:14px;font-weight:900;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 3px 0 #96281b;text-decoration:none;transition:transform .15s}
-.hb:hover{transform:translateY(-2px)}
-.hc{display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:12px;
-  background:linear-gradient(145deg,rgba(255,255,255,.1),rgba(255,255,255,.03));
-  border:1.5px solid rgba(255,200,100,.2);color:#fff;font-size:12px;font-weight:700;
-  text-shadow:0 1px 3px rgba(0,0,0,.5)}
-.hc .i{font-size:13px}
-.hsd{width:32px;height:32px;border-radius:50%;border:2px solid #ffd700;
-  background:linear-gradient(145deg,#f39c12,#e67e22);color:#fff;font-size:14px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 3px 0 #c0611a;transition:transform .15s}
-.hsd:hover{transform:translateY(-2px)}
+.hud{position:relative;z-index:80;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  padding:10px 18px;background:rgba(255,247,239,0.88);backdrop-filter:blur(14px);
+  border-bottom:2px solid rgba(240,122,46,0.22);box-shadow:0 2px 14px rgba(90,50,20,0.08)}
+.hud .side{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hs{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hud-chip{background:rgba(255,255,255,0.88);border:2px solid rgba(240,122,46,0.22);border-radius:999px;padding:7px 14px;font-weight:800;font-size:13px;display:flex;align-items:center;gap:6px;color:#3a2a1f}
+.hud-back{background:rgba(255,255,255,0.88);border:2px solid rgba(240,122,46,0.22);color:#3a2a1f;padding:7px 15px;border-radius:999px;cursor:pointer;font-weight:800;font-size:13px;text-decoration:none}
+.hud-back:hover{border-color:#f07a2e;color:#f07a2e;background:#fff}
+.sound-toggle{background:rgba(255,255,255,0.88);border:2px solid rgba(240,122,46,0.22);color:#3a2a1f;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:15px}
+
+.hc{display:none}.hb{display:none}.hsd{display:none}
 .hts{display:flex;gap:3px}.ht{font-size:15px;transition:transform .3s}.ht.lost{filter:grayscale(1) opacity(.3);transform:scale(.7)}
 
 /* TITLE */
-.title{position:fixed;top:46px;left:50%;transform:translateX(-50%);z-index:50;text-align:center}
-.title-banner{display:inline-block;background:linear-gradient(145deg,#6a3008,#4a2005);border:2px solid #d4a030;border-radius:8px;
-  padding:4px 18px;color:#ffd700;font-size:clamp(12px,1.6vw,17px);font-weight:400;
-  text-transform:uppercase;letter-spacing:2px;text-shadow:0 2px 4px rgba(0,0,0,.6);
-  box-shadow:0 4px 0 #2a1000,0 6px 15px rgba(0,0,0,.35)}
-.title-sub{margin-top:3px;color:#fff;font-size:clamp(11px,1.3vw,14px);font-weight:700;
-  text-shadow:0 1px 4px rgba(0,0,0,.5)}
-
-/* INSTRUCTION */
-.instruction{position:fixed;top:84px;left:50%;transform:translateX(-50%);z-index:50;
-  background:linear-gradient(145deg,#2ecc71,#27ae60);border:2px solid #1e8449;border-radius:8px;
-  padding:6px 18px;color:#fff;font-size:clamp(13px,1.8vw,18px);font-weight:700;
-  box-shadow:0 3px 8px rgba(0,0,0,.3);white-space:nowrap;transition:all .3s}
+.question-bar{position:relative;z-index:10;width:100%;text-align:center;padding:16px 80px;
+  background:rgba(255,247,239,0.88);backdrop-filter:blur(12px);border-bottom:2px solid rgba(240,122,46,0.22)}
+.question-badge{display:inline-flex;align-items:center;gap:6px;
+  background:linear-gradient(135deg,#ff9f5a,#f07a2e);color:#fff;
+  padding:6px 18px;border-radius:999px;
+  font-family:'Fredoka',sans-serif;font-weight:600;font-size:15px;letter-spacing:.5px;margin-bottom:8px;
+  box-shadow:0 3px 0 rgba(240,122,46,.28)}
 
 /* GAME AREA */
-.game{position:fixed;top:110px;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:stretch;padding:4px;gap:0}
+.game{flex:1;z-index:20;display:flex;align-items:stretch;padding:4px;gap:0;overflow:hidden}
 
 /* LEFT - ITEMS */
 .left-col{display:flex;flex-direction:column;gap:5px;justify-content:flex-start;padding-top:4px;
   width:clamp(130px,20vw,190px);flex-shrink:0;z-index:30;padding-left:4px}
-.left-label{background:linear-gradient(145deg,#6a3080,#4a2060);color:#ffd700;text-align:center;
-  padding:4px 6px;border-radius:5px;font-size:clamp(8px,1vw,11px);font-weight:700;
-  text-transform:uppercase;letter-spacing:1px;box-shadow:0 2px 5px rgba(0,0,0,.3);flex-shrink:0}
+.left-label{display:none}
 .item-card{background:linear-gradient(145deg,#faf5e8,#e8dcc0);border:3px solid #a08030;border-radius:10px;
   padding:6px;cursor:pointer;user-select:none;transition:all .25s;
   min-height:70px;
@@ -88,7 +68,7 @@ body{font-family:'Fredoka',sans-serif}
 
 /* WATER - Narrower, not full width */
 .water-area{position:absolute;bottom:0;left:8%;right:8%;height:35%;z-index:2;
-  background:linear-gradient(180deg,#0e7abd 0%,#0a6aaa 20%,#085a95 50%,#064a80 80%,#043a65 100%);
+  background:linear-gradient(180deg,#9ad8f5 0%,#7ec8ef 22%,#5eb8e8 50%,#4aa8de 78%,#3a98d0 100%);
   overflow:hidden;border-radius:8px 8px 0 0}
 .water-surface{position:absolute;top:0;left:0;right:0;height:8px;
   background:linear-gradient(180deg,rgba(255,255,255,.15),rgba(255,255,255,.05) 50%,transparent);
@@ -152,33 +132,18 @@ body{font-family:'Fredoka',sans-serif}
 /* RIGHT - DESCRIPTIONS */
 .right-col{display:flex;flex-direction:column;gap:5px;justify-content:center;padding-top:0;
   width:clamp(180px,28vw,280px);flex-shrink:0;z-index:25;padding-right:4px}
-.desc-card{background:linear-gradient(145deg,#8B4513 0%,#6a3510 50%,#5a2a08 100%);
-  border:3px solid #a07820;border-radius:10px;padding:12px 14px;position:relative;
+.desc-card{background:linear-gradient(145deg,#faf5e8,#e8dcc0);border:3px solid #a08030;border-radius:10px;padding:12px 14px;position:relative;
   min-height:70px;
-  box-shadow:0 3px 7px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,200,100,.1);
-  cursor:pointer;transition:all .25s}
+  box-shadow:0 3px 7px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.6);cursor:pointer;transition:all .25s}
 .desc-card:hover{transform:translateY(-2px);box-shadow:0 4px 10px rgba(0,0,0,.3);border-color:#d4a030}
 .desc-card.selected{border-color:#ffd700;box-shadow:0 0 14px rgba(255,215,0,.5),0 3px 7px rgba(0,0,0,.25);transform:scale(1.03)}
 .desc-card.matched{opacity:.3;cursor:not-allowed;border-color:#27ae60;pointer-events:none}
 .desc-card.wrong{animation:descShake .5s ease;border-color:#e74c3c}
 @keyframes descShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-3px)}40%{transform:translateX(3px)}60%{transform:translateX(-2px)}80%{transform:translateX(2px)}}
-.desc-card .dc-text{color:#f0e0c0;font-size:clamp(13px,1.6vw,18px);font-weight:600;line-height:1.3;
+.desc-card .dc-text{color:#3e1f0a;font-size:clamp(13px,1.6vw,18px);font-weight:600;line-height:1.3;
   overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 .desc-card .dc-nail{position:absolute;top:7px;left:50%;transform:translateX(-50%);width:7px;height:7px;border-radius:50%;
   background:radial-gradient(circle at 35% 35%,#c0a040,#8B6914);box-shadow:0 1px 3px rgba(0,0,0,.3)}
-
-/* HINT BUTTON */
-.hint-btn{position:fixed;bottom:15px;right:10px;z-index:60;width:clamp(36px,4vw,45px);height:clamp(36px,4vw,45px);
-  border-radius:50%;border:2px solid #ffd700;
-  background:linear-gradient(145deg,#8e44ad,#6c3483);color:#ffd700;font-size:clamp(12px,1.5vw,17px);
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 3px 0 #5b2c6f,0 4px 10px rgba(0,0,0,.3);transition:transform .15s}
-.hint-btn:hover{transform:translateY(-2px)}
-.hint-popup{position:fixed;bottom:65px;right:10px;z-index:60;background:linear-gradient(145deg,#8B4513,#654321);
-  border:2px solid #a07820;border-radius:10px;padding:10px 14px;max-width:200px;
-  color:#ffd700;font-size:11px;font-weight:700;line-height:1.4;
-  box-shadow:0 3px 10px rgba(0,0,0,.4);display:none}
-.hint-popup.show{display:block}
 
 /* FEEDBACK */
 .fb{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:.3s}
@@ -206,6 +171,11 @@ body{font-family:'Fredoka',sans-serif}
 
 @media(max-width:768px){
   .game{padding:4px}
+  .hud{padding:8px 12px}
+  .hud-chip{padding:5px 10px;font-size:13px;font-weight:800}
+  .hud-back{padding:5px 12px;font-size:11px}
+  .sound-toggle{width:30px;height:30px;font-size:13px}
+  .question-bar{padding:12px 20px}
   .left-col{width:clamp(75px,18vw,100px)}
   .right-col{width:clamp(85px,20vw,120px)}
   .desc-card .dc-text{font-size:10px}
@@ -224,43 +194,26 @@ body{font-family:'Fredoka',sans-serif}
 </head>
 <body>
 
-<div class="bg">
-  <div class="sky"><div class="sun"></div>
-    <div class="cl"><div class="clb c1"></div></div>
-    <div class="cl"><div class="clb c2"></div></div>
-  </div>
-</div>
-
 <div class="hud">
-  <div class="hs"><a class="hb" href="../EVS_Index.html" title="Menu">&larr;</a></div>
-  <div class="hs">
-    <div class="hc"><span class="i">⭐</span><span id="sD">0</span></div>
-    <div class="hc"><span class="i">🏆</span><span id="cD">x0</span></div>
-    <div class="hc"><span class="i">❓</span><span id="qD">0/4</span></div>
+  <div class="side"><a class="hud-back" href="../EVS_Index.html">← Menu</a></div>
+  <div class="side">
+    <div class="hud-chip">⭐ <span id="sD">0</span></div>
+    <div class="hud-chip">🔥 <span id="cD">x0</span></div>
+    <div class="hud-chip" id="qCountDisplay">Q 1/5</div>
   </div>
-  <div class="hs">
-    <div class="hts" id="hC"><span class="ht">❤️</span><span class="ht">❤️</span><span class="ht">❤️</span></div>
-    <button class="hsd" id="sndB">🔊</button>
-  </div>
+  <div class="side"><button class="sound-toggle" id="soundToggle">🔊</button></div>
 </div>
 
-<div class="title">
-  <div class="title-banner">🌿 MATCH QUEST!</div>
-  <div class="title-sub">Match the following</div>
+<div class="question-bar">
+  <div class="question-badge">🔗 Matching Game</div>
 </div>
-
-<div class="instruction" id="instrEl">👆 Tap an item on the LEFT, then tap its matching description on the RIGHT!</div>
 
 <div class="game" id="gameEl">
   <div class="left-col" id="leftCol">
-    <div class="left-label">🎯 TAP THESE</div>
   </div>
   <div class="center-col" id="centerCol"></div>
   <div class="right-col" id="rightCol"></div>
 </div>
-
-<button class="hint-btn" onclick="toggleHint()">💡</button>
-<div class="hint-popup" id="hintPop"></div>
 
 <div class="fb" id="fb"><div class="fb-c">
   <div class="fb-e" id="fE"></div>
@@ -278,10 +231,10 @@ var pairs=[
 ];
 
 var score=0,combo=0,hearts=3,matched=0,sndOn=true;
-var sD=document.getElementById("sD"),cD=document.getElementById("cD"),qD=document.getElementById("qD");
+var sD=document.getElementById("sD"),cD=document.getElementById("cD"),qD=document.getElementById("qCountDisplay");
 var hC=document.getElementById("hC"),fb=document.getElementById("fb");
-var fE=document.getElementById("fE"),fT=document.getElementById("fT"),fX=document.getElementById("fX");
-var pA=document.getElementById("pA"),sndB=document.getElementById("sndB");
+
+var pA=document.getElementById("pA"),sndB=document.getElementById("soundToggle");
 var leftCol=document.getElementById("leftCol"),centerCol=document.getElementById("centerCol"),rightCol=document.getElementById("rightCol");
 var hintPop=document.getElementById("hintPop"),instrEl=document.getElementById("instrEl");
 var selectedItem=null;
@@ -392,7 +345,7 @@ function moveChar(){
 }
 
 function buildGame(){
-  leftCol.innerHTML='<div class="left-label">🎯 TAP THESE</div>';
+  leftCol.innerHTML="";
   rightCol.innerHTML="";
   matched=0;selectedItem=null;
   qD.textContent="0/"+pairs.length;
@@ -422,9 +375,7 @@ function clearSelection(){
   selectedItem=null;
   document.querySelectorAll(".item-card").forEach(function(c){c.classList.remove("selected")});
   document.querySelectorAll(".desc-card").forEach(function(c){c.classList.remove("selected")});
-  instrEl.textContent="👆 Tap an item on the LEFT, then tap its matching description on the RIGHT!";
-  instrEl.style.background="linear-gradient(145deg,#2ecc71,#27ae60)";
-  instrEl.style.borderColor="#1e8449";
+  if(instrEl){instrEl.textContent="👆 Tap an item on the LEFT, then tap its matching description on the RIGHT!";instrEl.style.background="linear-gradient(145deg,#8B4513,#654321)";instrEl.style.borderColor="#a07820";}
 }
 
 function selectItem(id){
@@ -435,9 +386,7 @@ function selectItem(id){
   card.classList.add("selected");
   selectedItem=id;
   var p=pairs.find(function(x){return x.id===id});
-  instrEl.textContent="Now tap the matching description for: "+p.label+" 👉";
-  instrEl.style.background="linear-gradient(145deg,#f39c12,#e67e22)";
-  instrEl.style.borderColor="#d68910";
+  if(instrEl){instrEl.textContent="Now tap the matching description for: "+p.label+" 👉";instrEl.style.background="linear-gradient(145deg,#6a3080,#4a2060)";instrEl.style.borderColor="#a060c0";}
 }
 
 function selectDesc(id){
@@ -457,7 +406,7 @@ function checkMatch(itemId,descId){
     var p=pairs.find(function(x){return x.id===itemId});
     if(itemCard)itemCard.classList.add("matched");
     if(descCard){descCard.classList.add("matched");
-      descCard.innerHTML='<div class="dc-nail"></div><div class="dc-text" style="color:#27ae60">'+p.label+': '+p.desc+'</div>';
+      descCard.innerHTML='<div class="dc-nail"></div><div class="dc-text" style="color:#1e8449">'+p.label+': '+p.desc+'</div>';
     }
     matched++;score+=15+combo*3;combo++;
     sD.textContent=score;cD.textContent="x"+combo;
@@ -468,9 +417,7 @@ function checkMatch(itemId,descId){
 
     pC();conf(15);
     if(combo>=2){pB();showBn("COMBO x"+combo+"!")}
-    instrEl.textContent="✅ "+p.label+" matched! Bridge built, now crossing!";
-    instrEl.style.background="linear-gradient(145deg,#2ecc71,#27ae60)";
-    instrEl.style.borderColor="#1e8449";
+    if(instrEl){instrEl.textContent="✅ "+p.label+" matched! Bridge built, now crossing!";instrEl.style.background="linear-gradient(145deg,#27ae60,#1e8449)";instrEl.style.borderColor="#196f3d";}
     selectedItem=null;
     setTimeout(clearSelection,1500);
 
@@ -482,9 +429,7 @@ function checkMatch(itemId,descId){
     pW();
     if(itemCard)itemCard.classList.add("wrong");
     if(descCard)descCard.classList.add("wrong");
-    instrEl.textContent="❌ Wrong! The crocodiles are hungry... Try again!";
-    instrEl.style.background="linear-gradient(145deg,#e74c3c,#c0392b)";
-    instrEl.style.borderColor="#922b21";
+    if(instrEl){instrEl.textContent="❌ Wrong! The crocodiles are hungry... Try again!";instrEl.style.background="linear-gradient(145deg,#c0392b,#922b21)";instrEl.style.borderColor="#7b241c";}
     setTimeout(function(){
       if(itemCard)itemCard.classList.remove("wrong");
       if(descCard)descCard.classList.remove("wrong");
@@ -506,9 +451,7 @@ function showBn(t){
 function sFB(tp,e,t,x){fb.className="fb "+tp;fE.textContent=e;fT.textContent=t;fX.textContent=x||"";pA.style.display="none";fb.classList.add("show");if(tp!=="fn")setTimeout(function(){fb.classList.remove("show")},900)}
 
 function loseH(){
-  hearts=Math.max(0,hearts-1);
-  hC.querySelectorAll(".ht").forEach(function(h,i){h.classList.toggle("lost",i>=hearts)});
-  if(hearts<=0)setTimeout(function(){sFB("fn","Game Over!","The crocodiles got you! Score: "+score);pA.style.display="inline-block"},600);
+  /* Unlimited tries — no game over lockout */
 }
 
 function showFin(){
@@ -521,6 +464,7 @@ function showFin(){
 }
 
 function toggleHint(){
+  if(!hintPop)return;
   eA();
   var unmatched=pairs.filter(function(p){var z=document.getElementById("ic-"+p.id);return z&&!z.classList.contains("matched")});
   if(unmatched.length>0){hintPop.innerHTML="<strong>💡 Hint:</strong><br>"+unmatched[0].hint;hintPop.classList.toggle("show")}
@@ -530,8 +474,8 @@ pA.addEventListener("click",function(){
   fb.classList.remove("show","ok","no","fn");
   score=0;combo=0;hearts=3;
   sD.textContent="0";cD.textContent="x0";
-  hC.querySelectorAll(".ht").forEach(function(h){h.classList.remove("lost")});
-  hintPop.classList.remove("show");
+  if(hC)hC.querySelectorAll(".ht").forEach(function(h){h.classList.remove("lost")});
+  if(hintPop)hintPop.classList.remove("show");
   setTimeout(buildGame,350);
 });
 
