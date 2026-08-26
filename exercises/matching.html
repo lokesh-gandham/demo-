@@ -68,7 +68,7 @@ body{font-family:'Fredoka',sans-serif}
   width:clamp(130px,20vw,190px);flex-shrink:0;z-index:30;padding-left:4px}
 .left-label{background:linear-gradient(145deg,#6a3080,#4a2060);color:#ffd700;text-align:center;
   padding:4px 6px;border-radius:5px;font-size:clamp(8px,1vw,11px);font-weight:700;
-  text-transform:uppercase;letter-spacing:1px;box-shadow:0 2px 5px rgba(0,0,0,.3)}
+  text-transform:uppercase;letter-spacing:1px;box-shadow:0 2px 5px rgba(0,0,0,.3);flex-shrink:0}
 .item-card{background:linear-gradient(145deg,#faf5e8,#e8dcc0);border:3px solid #a08030;border-radius:10px;
   padding:6px;cursor:pointer;user-select:none;transition:all .25s;
   min-height:70px;
@@ -144,17 +144,20 @@ body{font-family:'Fredoka',sans-serif}
 .char-on-bridge{position:absolute;z-index:15;
   transition:left 1.2s cubic-bezier(.25,1.2,.5,1);
   display:flex;flex-direction:column;align-items:center;
-  bottom:46%}
+  bottom:48%}
 .char-on-bridge img{width:clamp(50px,7vw,80px);height:auto;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35))}
 .char-on-bridge.walking{animation:charBounce .6s ease-in-out}
 @keyframes charBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 
 /* RIGHT - DESCRIPTIONS */
-.right-col{display:flex;flex-direction:column;gap:5px;justify-content:flex-start;padding-top:8px;
+.right-col{display:flex;flex-direction:column;gap:5px;justify-content:flex-start;padding-top:4px;
   width:clamp(180px,28vw,280px);flex-shrink:0;z-index:25;padding-right:4px}
+.right-label{background:linear-gradient(145deg,#6a3080,#4a2060);color:#ffd700;text-align:center;
+  padding:4px 6px;border-radius:5px;font-size:clamp(8px,1vw,11px);font-weight:700;
+  text-transform:uppercase;letter-spacing:1px;box-shadow:0 2px 5px rgba(0,0,0,.3);flex-shrink:0}
 .desc-card{background:linear-gradient(145deg,#8B4513 0%,#6a3510 50%,#5a2a08 100%);
   border:3px solid #a07820;border-radius:10px;padding:12px 14px;position:relative;
-  min-height:70px;display:flex;flex-direction:column;justify-content:center;
+  min-height:80px;max-height:80px;
   box-shadow:0 3px 7px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,200,100,.1);
   cursor:pointer;transition:all .25s}
 .desc-card:hover{transform:translateY(-2px);box-shadow:0 4px 10px rgba(0,0,0,.3);border-color:#d4a030}
@@ -162,7 +165,8 @@ body{font-family:'Fredoka',sans-serif}
 .desc-card.matched{opacity:.3;cursor:not-allowed;border-color:#27ae60;pointer-events:none}
 .desc-card.wrong{animation:descShake .5s ease;border-color:#e74c3c}
 @keyframes descShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-3px)}40%{transform:translateX(3px)}60%{transform:translateX(-2px)}80%{transform:translateX(2px)}}
-.desc-card .dc-text{color:#f0e0c0;font-size:clamp(13px,1.6vw,18px);font-weight:600;line-height:1.35}
+.desc-card .dc-text{color:#f0e0c0;font-size:clamp(13px,1.6vw,18px);font-weight:600;line-height:1.3;
+  overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 .desc-card .dc-nail{position:absolute;top:7px;left:50%;transform:translateX(-50%);width:7px;height:7px;border-radius:50%;
   background:radial-gradient(circle at 35% 35%,#c0a040,#8B6914);box-shadow:0 1px 3px rgba(0,0,0,.3)}
 
@@ -367,7 +371,7 @@ function buildCenter(){
   var ch=document.createElement("div");ch.className="char-on-bridge";ch.id="charEl";
   ch.innerHTML='<img src="../assets/images/ladki.png" alt="Girl">';
   ch.style.position="absolute";
-  ch.style.bottom="46%";
+  ch.style.bottom="48%";
   ch.style.left="5%";
   ch.style.zIndex="15";
   centerCol.appendChild(ch);
@@ -392,7 +396,7 @@ function moveChar(){
 
 function buildGame(){
   leftCol.innerHTML='<div class="left-label">🎯 TAP THESE</div>';
-  rightCol.innerHTML="";
+  rightCol.innerHTML='<div class="right-label">📝 MATCH THESE</div>';
   matched=0;selectedItem=null;
   qD.textContent="0/"+pairs.length;
 
