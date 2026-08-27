@@ -35,6 +35,8 @@ button{font:inherit}
 .hud-back{ background:var(--panel); border:2px solid var(--edge); color:var(--ink); padding:7px 15px; border-radius:999px; cursor:pointer; font-weight:800; font-size:13px; text-decoration:none}
 .hud-back:hover{ border-color:var(--peach-deep); color:var(--peach-deep); background:#fff}
 .sound-toggle{ background:var(--panel); border:2px solid var(--edge); color:var(--ink); width:34px; height:34px; border-radius:50%; cursor:pointer; font-size:15px}
+.progress-btn{ background:var(--panel); border:2px solid var(--edge); color:var(--ink); width:34px; height:34px; border-radius:50%; cursor:pointer; font-size:15px; position:relative; }
+.progress-btn .badge{ position:absolute; top:-4px; right:-4px; background:var(--peach); color:#fff; font-size:10px; font-weight:800; width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
 
 .question-bar{
   position:relative; z-index:10; width:100%; text-align:center;
@@ -69,12 +71,12 @@ button{font:inherit}
   position:absolute; inset:0;
   display:flex; justify-content:space-between; align-items:stretch;
   padding:16px 20px;
-  gap:60px;
+  gap:140px;
 }
 
 .left-col,.right-col{
-  flex:0 0 calc(50% - 30px);
-  display:flex; flex-direction:column; gap:12px;
+  flex:0 0 calc(50% - 70px);
+  display:flex; flex-direction:column; gap:20px;
 }
 
 .card{
@@ -151,7 +153,7 @@ button{font:inherit}
 
 .right-text{
   font-family:'Fredoka',sans-serif;
-  font-size:clamp(11px,1.4vw,18px);
+  font-size:clamp(16px,2.2vw,26px);
   font-weight:500;
   line-height:1.2;
   text-align:left;
@@ -207,21 +209,7 @@ button{font:inherit}
   to{ stroke-dashoffset:0 }
 }
 
-.feedback-overlay{
-  position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.5);
-  z-index:9999; font-family:'Fredoka',sans-serif; font-weight:700;
-  width:min(340px,85%); padding:0; border-radius:24px;
-  opacity:0; pointer-events:none; transition:all .4s cubic-bezier(.34,1.56,.64,1);
-  overflow:hidden; text-align:center;
-  background:rgba(255,247,239,0.96); border:2px solid var(--edge);
-  box-shadow:0 30px 60px rgba(90,50,20,.22);
-}
-.feedback-overlay.show{ opacity:1; transform:translate(-50%,-50%) scale(1); pointer-events:auto }
-.feedback-overlay .fb-body{ padding:20px; }
-.feedback-overlay .fb-title{ font-size:clamp(28px,5vw,36px); font-weight:700; line-height:1.1; margin-bottom:4px; color:var(--ink); }
-.feedback-overlay .fb-subtitle{ font-size:clamp(13px,1.8vw,16px); font-weight:600; line-height:1.3; opacity:.85; color:var(--ink-soft); }
-
-.result-overlay{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(58,42,31,0.4);backdrop-filter:blur(8px);opacity:0;visibility:hidden;transition:.3s}
+.result-overlay{position:fixed;inset:0;z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(58,42,31,0.4);backdrop-filter:blur(8px);opacity:0;visibility:hidden;transition:.3s}
 .result-overlay.show{opacity:1;visibility:visible}
 .result-card{max-width:480px;width:100%;text-align:center;background:rgba(255,247,239,0.96);border:2px solid var(--edge);backdrop-filter:blur(18px);border-radius:30px;padding:40px 30px;box-shadow:0 30px 60px rgba(90,50,20,.22);transform:scale(.8);transition:.35s cubic-bezier(.34,1.56,.64,1)}
 .result-overlay.show .result-card{transform:scale(1)}
@@ -258,11 +246,11 @@ button{font:inherit}
 .float-banner.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
 .float-banner.combo{background:linear-gradient(135deg,var(--peach),var(--pink));color:#fff;box-shadow:0 10px 24px rgba(255,143,179,.3)}
 
-.confetti{position:fixed;inset:0;z-index:4000;pointer-events:none;overflow:hidden}
+.confetti{position:fixed;inset:0;z-index:400;pointer-events:none;overflow:hidden}
 .confetti-piece{position:absolute;top:-30px;width:11px;height:18px;border-radius:3px;animation:confettiFall var(--t) linear var(--d) forwards}
 @keyframes confettiFall{to{transform:translate(var(--x),110vh) rotate(var(--r));opacity:0}}
 
-.match-confetti{position:fixed;left:50%;top:50%;width:1px;height:1px;z-index:4500;pointer-events:none;overflow:visible}
+.match-confetti{position:fixed;left:50%;top:50%;width:1px;height:1px;z-index:400;pointer-events:none;overflow:visible}
 .match-confetti-piece{position:absolute;left:0;top:0;width:14px;height:22px;border-radius:4px;opacity:1;transform:translate(-50%,-50%);animation:centerConfetti 1.25s cubic-bezier(.15,.75,.25,1) forwards;box-shadow:0 2px 3px rgba(0,0,0,.16)}
 @keyframes centerConfetti{
   0%{opacity:1;transform:translate(-50%,-50%) rotate(0) scale(1)}
@@ -285,7 +273,7 @@ button{font:inherit}
   .left-col,.right-col{ gap:6px }
   .card{ border-width:2px; border-radius:14px }
   .left-label{ font-size:12px }
-  .right-text{ font-size:9px }
+  .right-text{ font-size:13px }
   .number{ border-width:2px }
 }
 
@@ -306,7 +294,7 @@ button{font:inherit}
     <div class="hud-chip">&#11088; <span id="scoreDisplay">0</span></div>
     <div class="hud-chip">&#128293; <span id="comboDisplay">x0</span></div>
     <div class="hud-chip" id="qCountDisplay">0 / 4</div>
-    <button class="hud-chip" id="progressBtn" title="Progress">&#128203;<span style="background:var(--peach);color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-left:2px" id="progressBadge">0</span></button>
+    <button class="progress-btn" id="progressBtn" title="Answer Progress">&#128203;<span class="badge" id="progressBadge">0</span></button>
   </div>
   <div class="side"><button class="sound-toggle" id="soundBtn" aria-label="Sound">&#128266;</button></div>
 </div>
@@ -322,13 +310,6 @@ button{font:inherit}
     <main class="right-col" id="rightCol"></main>
   </div>
   <svg class="lines" id="lines" aria-hidden="true"></svg>
-</div>
-
-<div class="feedback-overlay" id="feedbackOverlay">
-  <div class="fb-body">
-    <div class="fb-title" id="fbTitle">&#128546; Try again!</div>
-    <div class="fb-subtitle">That doesn't match, try another pair.</div>
-  </div>
 </div>
 
 <div class="progress-overlay" id="progressOverlay">
@@ -440,7 +421,6 @@ function selectRight(id, card) {
     combo = 0; updateHUD();
     left.classList.add("wrong"); right.classList.add("wrong");
     speak("Try again");
-    showFeedback();
     setTimeout(() => { left.classList.remove("wrong"); right.classList.remove("wrong") }, 500);
     selectedLeft = null; left.classList.remove("selected");
   }
@@ -473,13 +453,6 @@ function redrawLines() {
 }
 window.addEventListener("resize", redrawLines);
 
-function showFeedback() {
-  const overlay = document.getElementById("feedbackOverlay");
-  overlay.classList.add("show");
-  clearTimeout(showFeedback.timer);
-  showFeedback.timer = setTimeout(() => { overlay.classList.remove("show"); }, 800);
-}
-
 function showFinal() {
   var pct = matched.size / PAIRS.length;
   document.getElementById('resultBadge').textContent = '\uD83C\uDF1F';
@@ -490,21 +463,20 @@ function showFinal() {
   document.getElementById('resultStars').textContent = pct===1?'\u2B50\u2B50\u2B50':pct>=0.6?'\u2B50\u2B50\u2606':'\u2B50\u2606\u2606';
   setTimeout(function(){
     document.getElementById('resultOverlay').classList.add('show');
-    createConfetti(120);
   }, 500);
   finalSound();
 }
 
 function updateProgress() {
   var list = document.getElementById('progressList');
-  if(matched.size){
-    list.innerHTML = [...matched.keys()].sort((a,b)=>a-b).map(id => {
-      var p = PAIRS.find(x => x.id === id);
-      return '<div class="progress-item">\u2713 '+p+' \u2192 <span>'+p.right+'</span></div>';
-    }).join("");
-  } else {
-    list.innerHTML = '<div class="progress-item empty">Match cards to see progress.</div>';
-  }
+  var html = PAIRS.map(function(p){
+    if(matched.has(p.id)){
+      return '<div class="progress-item correct">&#10003; '+p.left+' &#8594; '+p.right+'</div>';
+    } else {
+      return '<div class="progress-item">'+p.left+' &#8594; ???</div>';
+    }
+  }).join("");
+  list.innerHTML = html || '<div class="progress-item empty">Match cards to see progress.</div>';
 }
 
 document.getElementById('progressBtn').addEventListener('click', function(){

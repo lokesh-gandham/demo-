@@ -80,20 +80,39 @@
   .word{
     position:absolute;
     font-family:'Fredoka',sans-serif;
-    font-weight:500;
-    font-size:18px;
-    padding:9px 16px;
-    border-radius:999px;
-    border:3px solid var(--navy);
+    font-weight:400;
+    font-size:clamp(26px,4vw,36px);
+    padding:22px 36px 18px;
+    border-radius:50% 50% 50% 50% / 55% 55% 45% 45%;
+    border:none;
     white-space:nowrap;
     user-select:none;
-    box-shadow:3px 3px 0 rgba(45,48,71,0.7);
     will-change:transform;
+    text-shadow:0 1px 2px rgba(0,0,0,0.08);
+    color:#3a2a1f;
+    letter-spacing:0.5px;
+    filter:drop-shadow(0 4px 8px rgba(0,0,0,0.22));
   }
-  .word.opt-a{ background:#B8ECE6; }
-  .word.opt-b{ background:#FFE9A8; }
-  .word.opt-c{ background:#D8CCF0; }
-  .word.opt-d{ background:#FFC9C9; }
+  .word::after{
+    content:'';
+    position:absolute;
+    bottom:-8px;
+    left:50%;
+    transform:translateX(-50%);
+    width:0; height:0;
+    border-left:8px solid transparent;
+    border-right:8px solid transparent;
+    border-top:10px solid var(--navy);
+  }
+  .word.opt-a{ background:radial-gradient(ellipse at 35% 30%,#c8f5ef,#5cc4b0); }
+  .word.opt-b{ background:radial-gradient(ellipse at 35% 30%,#fff3b8,#f5c842); }
+  .word.opt-c{ background:radial-gradient(ellipse at 35% 30%,#e8ddf8,#9b82d8); }
+  .word.opt-d{ background:radial-gradient(ellipse at 35% 30%,#ffdbdb,#f07070); }
+
+  @keyframes balloonBob{
+    0%,100%{ transform:translateY(0) rotate(-1.5deg) }
+    50%{ transform:translateY(-8px) rotate(1.5deg) }
+  }
 
   #basket{
     position:absolute;
