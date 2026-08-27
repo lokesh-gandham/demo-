@@ -630,21 +630,19 @@ function stopTimer(){
 }
 
 function showTimeUp(){
-  var overlay = document.getElementById('resultOverlay');
   var correct = state.questionResults.filter(function(r){return r==='correct'}).length;
   var elapsed = 120 - state.timerRemaining;
   var em = Math.floor(elapsed / 60);
   var es = elapsed % 60;
   var timeStr = em + ':' + (es < 10 ? '0' : '') + es;
-  overlay.querySelector('.result-badge').textContent = '⏰';
-  overlay.querySelector('.result-card h2').textContent = "Time's Up!";
-  overlay.querySelector('.result-card h2').style.color = '#e74c3c';
-  var stats = overlay.querySelector('.result-stats');
-  stats.innerHTML = '<div class="rstat"><b>' + correct + '/' + questions.length + '</b><span>Questions</span></div>'
-    + '<div class="rstat"><b>' + state.score + '</b><span>Score</span></div>'
-    + '<div class="rstat"><b>x' + state.bestCombo + '</b><span>Best Combo</span></div>'
-    + '<div class="rstat"><b>' + timeStr + '</b><span>Time Used</span></div>';
-  overlay.classList.add('show');
+  document.getElementById('resultBadge').textContent = '⏰';
+  document.getElementById('resultTitle').textContent = "Time's Up!";
+  document.getElementById('resultTitle').style.color = '#e74c3c';
+  document.getElementById('resultScore').textContent = state.score;
+  document.getElementById('resultCorrect').textContent = correct + '/' + questions.length;
+  document.getElementById('resultCombo').textContent = 'x' + state.bestCombo;
+  document.getElementById('resultStars').textContent = '⏰';
+  document.getElementById('resultOverlay').classList.add('show');
 }
 
 function resetGame(){
