@@ -33,6 +33,8 @@ canvas#fxCanvas{position:fixed; inset:0; width:100%; height:100%; pointer-events
   border-bottom:2px solid var(--edge); box-shadow:0 2px 14px rgba(90,50,20,0.08);}
 .hud .side{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
 .hud-chip{ background:var(--panel); border:2px solid var(--edge); border-radius:999px; padding:7px 14px; font-weight:800; font-size:13px; display:flex; align-items:center; gap:6px; color:var(--ink);}
+.timer-chip.warn{color:#e74c3c;border-color:#e74c3c;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 .hud-back{ background:var(--panel); border:2px solid var(--edge); color:var(--ink); padding:7px 15px; border-radius:999px; cursor:pointer; font-weight:800; font-size:13px; text-decoration:none;}
 .hud-back:hover{ border-color:var(--peach-deep); color:var(--peach-deep); background:#fff;}
 .sound-toggle{ background:var(--panel); border:2px solid var(--edge); color:var(--ink); width:34px; height:34px; border-radius:50%; cursor:pointer; font-size:15px;}
@@ -207,7 +209,9 @@ canvas#fxCanvas{position:fixed; inset:0; width:100%; height:100%; pointer-events
     <div class="hud-chip" id="qCountDisplay">Q 1/5</div>
     <button class="progress-btn" id="progressBtn" title="Answer Progress">📋<span class="badge" id="progressBadge">0</span></button>
   </div>
-  <div class="side"><button class="sound-toggle" id="soundToggle">🔊</button></div>
+  <div class="side"><button class="sound-toggle" id="soundToggle">🔊</button>
+    <div class="hud-chip timer-chip" id="timerChip">⏱️ 2:00</div>
+  </div>
 </div>
 
 <div class="question-bar" id="questionBar">
@@ -327,6 +331,43 @@ let currentQ = 0, score = 0, combo = 0, bestCombo = 0, soundOn = true;
 let questionResults = [], gameRunning = false;
 let orbs = [], canvas, ctx, stageWrap, feedbackTimer = null;
 let canvasW = 0, canvasH = 0;
+let timerRemaining = 120, timerInterval = null;
+
+function renderTimer(){
+  var el = document.getElementById('timerChip');
+  var m = Math.floor(timerRemaining / 60);
+  var s = timerRemaining % 60;
+  el.textContent = '⏱️ ' + m + ':' + (s < 10 ? '0' : '') + s;
+  if(timerRemaining <= 30){ el.classList.add('warn'); } else { el.classList.remove('warn'); }
+}
+function startTimer(){
+  stopTimer();
+  timerRemaining = 120;
+  renderTimer();
+  timerInterval = setInterval(function(){
+    timerRemaining--;
+    renderTimer();
+    if(timerRemaining <= 0){
+      stopTimer();
+      gameRunning = false;
+      showTimeUp();
+    }
+  }, 1000);
+}
+function stopTimer(){
+  if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+}
+function showTimeUp(){
+  var correctCount = questionResults.filter(function(r){return r==='correct'}).length;
+  document.getElementById('resultBadge').textContent = '⏰';
+  document.getElementById('resultTitle').textContent = "Time's Up!";
+  document.getElementById('resultTitle').style.color = '#e74c3c';
+  document.getElementById('resultScore').textContent = score;
+  document.getElementById('resultCorrect').textContent = correctCount + '/' + quizData.length;
+  document.getElementById('resultCombo').textContent = 'x' + bestCombo;
+  document.getElementById('resultStars').textContent = '⏰';
+  document.getElementById('resultOverlay').classList.add('show');
+}
 
 const imgCache = {};
 let imagesLoaded = false;
@@ -712,6 +753,8 @@ function onOrbHit(p){
 
 function showResult(){
   gameRunning = false;
+  stopTimer();
+  document.getElementById('resultTitle').style.color = '';
   const correctCount = questionResults.filter(r=>r==='correct').length;
   const total = quizData.length;
   document.getElementById('resultScore').textContent = score;
@@ -762,6 +805,7 @@ document.getElementById('resultReplayBtn').addEventListener('click',()=>{
   document.getElementById('resultOverlay').classList.remove('show');
   updateProgressBadge();
   loadQuestion();
+  startTimer();
 });
 document.getElementById('resultMenuBtn').addEventListener('click',()=>{
   ensureAudio(); tone(500,0,0.08,'triangle',0.09);
@@ -776,6 +820,7 @@ document.getElementById('soundToggle').addEventListener('click',()=>{
 
 loadAllImages().then(()=>{
   loadQuestion();
+  startTimer();
   gameLoop();
 });
 

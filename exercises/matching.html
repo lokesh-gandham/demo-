@@ -32,6 +32,8 @@ button{font:inherit}
   border-bottom:2px solid var(--edge); box-shadow:0 2px 14px rgba(90,50,20,0.08)}
 .hud .side{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
 .hud-chip{ background:var(--panel); border:2px solid var(--edge); border-radius:999px; padding:7px 14px; font-weight:800; font-size:13px; display:flex; align-items:center; gap:6px; color:var(--ink)}
+.timer-chip.warn{color:#e74c3c;border-color:#e74c3c;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 .hud-back{ background:var(--panel); border:2px solid var(--edge); color:var(--ink); padding:7px 15px; border-radius:999px; cursor:pointer; font-weight:800; font-size:13px; text-decoration:none}
 .hud-back:hover{ border-color:var(--peach-deep); color:var(--peach-deep); background:#fff}
 .sound-toggle{ background:var(--panel); border:2px solid var(--edge); color:var(--ink); width:34px; height:34px; border-radius:50%; cursor:pointer; font-size:15px}
@@ -315,7 +317,9 @@ button{font:inherit}
     <div class="hud-chip" id="qCountDisplay">0 / 4</div>
     <button class="progress-btn" id="progressBtn" title="Answer Progress">&#128203;<span class="badge" id="progressBadge">0</span></button>
   </div>
-  <div class="side"><button class="sound-toggle" id="soundBtn" aria-label="Sound">&#128266;</button></div>
+  <div class="side"><button class="sound-toggle" id="soundBtn" aria-label="Sound">&#128266;</button>
+    <div class="hud-chip timer-chip" id="timerChip">⏱️ 2:00</div>
+  </div>
 </div>
 
 <div class="question-bar">
@@ -376,6 +380,33 @@ const board = document.querySelector(".stage-wrap");
 const scoreDisplay = document.getElementById("scoreDisplay"), comboDisplay = document.getElementById("comboDisplay"), qCountDisplay = document.getElementById("qCountDisplay");
 
 let selectedLeft = null, matched = new Map(), score = 0, combo = 0, bestCombo = 0, soundEnabled = true, audioCtx = null;
+let timerRemaining = 120, timerInterval = null;
+
+function renderTimer(){
+  var el = document.getElementById('timerChip');
+  var m = Math.floor(timerRemaining / 60), s = timerRemaining % 60;
+  el.textContent = '⏱️ ' + m + ':' + (s < 10 ? '0' : '') + s;
+  if(timerRemaining <= 30){ el.classList.add('warn'); } else { el.classList.remove('warn'); }
+}
+function startTimer(){
+  stopTimer(); timerRemaining = 120; renderTimer();
+  timerInterval = setInterval(function(){
+    timerRemaining--; renderTimer();
+    if(timerRemaining <= 0){ stopTimer(); showTimeUp(); }
+  }, 1000);
+}
+function stopTimer(){ if(timerInterval){ clearInterval(timerInterval); timerInterval = null; } }
+function showTimeUp(){
+  var correctCount = matched.size;
+  document.getElementById('resultBadge').textContent = '⏰';
+  document.getElementById('resultTitle').textContent = "Time's Up!";
+  document.getElementById('resultTitle').style.color = '#e74c3c';
+  document.getElementById('resultScore').textContent = score;
+  document.getElementById('resultCorrect').textContent = correctCount + '/' + PAIRS.length;
+  document.getElementById('resultCombo').textContent = 'x' + bestCombo;
+  document.getElementById('resultStars').textContent = '⏰';
+  document.getElementById('resultOverlay').classList.add('show');
+}
 
 function showBanner(text){
   var el=document.getElementById('floatBanner');
@@ -484,6 +515,8 @@ function redrawLines() {
 window.addEventListener("resize", redrawLines);
 
 function showFinal() {
+  stopTimer();
+  document.getElementById('resultTitle').style.color = '';
   var pct = matched.size / PAIRS.length;
   document.getElementById('resultBadge').textContent = '\uD83C\uDF1F';
   document.getElementById('resultTitle').textContent = 'ALL MATCHED!';
@@ -522,8 +555,10 @@ document.getElementById('progressOverlay').addEventListener('click', function(e)
 
 document.getElementById('resultReplayBtn').addEventListener('click', function(){
   document.getElementById('resultOverlay').classList.remove('show');
+  document.getElementById('resultTitle').style.color = '';
   selectedLeft = null; matched.clear(); score = 0; combo = 0; bestCombo = 0;
   render();
+  startTimer();
 });
 document.getElementById('resultMenuBtn').addEventListener('click', function(){
   window.location.href = '../EVS_Index.html';

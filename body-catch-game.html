@@ -791,7 +791,9 @@ function renderProgressList(){
     let status = '○';
     let cls = '';
     const punct = q.suffixPunct || '';
-    const sentence = (q.pre + ' ______ ' + q.post + punct).replace(/\s+/g,' ').trim();
+    let blankText = '______';
+    if(result === 'correct' || result === 'wrong'){ blankText = q.answer; }
+    const sentence = (q.pre + ' ' + blankText + ' ' + q.post + punct).replace(/\s+/g,' ').trim();
     if(result === 'correct'){ status = '✓'; cls = 'correct'; }
     else if(result === 'wrong'){ status = '✗'; cls = 'wrong'; }
     li.className = 'progress-item' + (cls ? ' ' + cls : '');

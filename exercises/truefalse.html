@@ -26,6 +26,8 @@ body{
   border-bottom:2px solid rgba(240,122,46,0.22);box-shadow:0 2px 14px rgba(90,50,20,0.08)}
 .hud .side{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .hud-chip{background:rgba(255,255,255,0.88);border:2px solid rgba(240,122,46,0.22);border-radius:999px;padding:7px 14px;font-weight:800;font-size:13px;display:flex;align-items:center;gap:6px;color:#3a2a1f}
+.timer-chip.warn{color:#e74c3c;border-color:#e74c3c;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 .hud-back{background:rgba(255,255,255,0.88);border:2px solid rgba(240,122,46,0.22);color:#3a2a1f;padding:7px 15px;border-radius:999px;cursor:pointer;font-weight:800;font-size:13px;text-decoration:none}
 .hud-back:hover{border-color:#f07a2e;color:#f07a2e;background:#fff}
 .sound-toggle{background:rgba(255,255,255,0.88);border:2px solid rgba(240,122,46,0.22);color:#3a2a1f;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:15px}
@@ -255,7 +257,9 @@ body{
     <div class="hud-chip" id="qCountDisplay">Q 1/5</div>
     <button class="progress-btn" id="progressBtn" title="Answer Progress">📋<span class="badge" id="progressBadge">0</span></button>
   </div>
-  <div class="side"><button class="sound-toggle" id="soundToggle">🔊</button></div>
+  <div class="side"><button class="sound-toggle" id="soundToggle">🔊</button>
+    <div class="hud-chip timer-chip" id="timerChip">⏱️ 2:00</div>
+  </div>
 </div>
 
 <div class="question-bar">
@@ -400,6 +404,33 @@ body{
 
   var cQ=0,score=0,combo=0,wrongs=0,locked=false,sndOn=true;
   var questionResults=[];
+  var timerRemaining=120,timerInterval=null;
+
+  function renderTimer(){
+    var el=document.getElementById('timerChip');
+    var m=Math.floor(timerRemaining/60),s=timerRemaining%60;
+    el.textContent='⏱️ '+m+':'+(s<10?'0':'')+s;
+    if(timerRemaining<=30){el.classList.add('warn')}else{el.classList.remove('warn')}
+  }
+  function startTimer(){
+    stopTimer();timerRemaining=120;renderTimer();
+    timerInterval=setInterval(function(){
+      timerRemaining--;renderTimer();
+      if(timerRemaining<=0){stopTimer();showTimeUp()}
+    },1000);
+  }
+  function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null}}
+  function showTimeUp(){
+    var correct=quiz.length-wrongs;
+    document.getElementById('resultBadge').textContent='⏰';
+    document.getElementById('resultTitle').textContent="Time's Up!";
+    document.getElementById('resultTitle').style.color='#e74c3c';
+    document.getElementById('resultScore').textContent=score;
+    document.getElementById('resultCorrect').textContent=correct+'/'+quiz.length;
+    document.getElementById('resultCombo').textContent='x'+combo;
+    document.getElementById('resultStars').textContent='⏰';
+    document.getElementById('resultOverlay').classList.add('show');
+  }
   var qS=document.getElementById("qS"),sD=document.getElementById("sD"),cD=document.getElementById("cD");
   var qD=document.getElementById("qCountDisplay"),fb=document.getElementById("fb");
   var fE=document.getElementById("fE"),fT=document.getElementById("fT"),fX=document.getElementById("fX");
@@ -588,6 +619,8 @@ body{
   }
 
   function showFin(){
+    stopTimer();
+    document.getElementById('resultTitle').style.color='';
     var correct=quiz.length-wrongs;
     var pct=correct/quiz.length;
     var em,ti;
@@ -619,10 +652,11 @@ body{
   });
   document.getElementById('resultReplayBtn').addEventListener('click',function(){
     document.getElementById('resultOverlay').classList.remove('show');
+    document.getElementById('resultTitle').style.color='';
     cQ=0;score=0;combo=0;wrongs=0;locked=false;
     sD.textContent="0";cD.textContent="x0";
     questionResults=[];
-    setTimeout(loadQ,300);
+    setTimeout(function(){loadQ();startTimer()},300);
   });
   document.getElementById('resultMenuBtn').addEventListener('click',function(){
     window.location.href='../EVS_Index.html';
@@ -667,6 +701,7 @@ body{
   });
 
   loadQ();
+  startTimer();
 })();
 </script>
 </body>
