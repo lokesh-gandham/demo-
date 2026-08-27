@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Smash It! - True or False</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+:root{--peach:#ff9f5a;--peach-deep:#f07a2e;--ink:#3a2a1f;--ink-soft:#6a5240;--ink-dim:#8a7260;--edge:rgba(240,122,46,0.22)}
 html,body{width:100%;height:100%;overflow:hidden;touch-action:manipulation}
 body{
   font-family:'Fredoka',sans-serif;color:#3a2a1f;
@@ -28,6 +29,8 @@ body{
 .hud-back{background:rgba(255,255,255,0.88);border:2px solid rgba(240,122,46,0.22);color:#3a2a1f;padding:7px 15px;border-radius:999px;cursor:pointer;font-weight:800;font-size:13px;text-decoration:none}
 .hud-back:hover{border-color:#f07a2e;color:#f07a2e;background:#fff}
 .sound-toggle{background:rgba(255,255,255,0.88);border:2px solid rgba(240,122,46,0.22);color:#3a2a1f;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:15px}
+.progress-btn{background:rgba(255,255,255,0.88);border:2px solid rgba(240,122,46,0.22);color:#3a2a1f;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:15px;position:relative}
+.progress-btn .badge{position:absolute;top:-4px;right:-4px;background:#f07a2e;color:#fff;font-size:10px;font-weight:800;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
 
 /* Hearts (kept for game logic) */
 .hc{display:none}.hb{display:none}.hsd{display:none}
@@ -204,6 +207,42 @@ body{
   .stones{gap:clamp(15px,5vw,30px)}
   .stage-wrap{margin:8px 12px 12px}
 }
+
+.progress-overlay{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;background:rgba(58,42,31,0.4);backdrop-filter:blur(8px);opacity:0;visibility:hidden;transition:.3s}
+.progress-overlay.show{opacity:1;visibility:visible}
+.progress-card{max-width:400px;width:90%;background:rgba(255,247,239,0.96);border:2px solid var(--edge);backdrop-filter:blur(18px);border-radius:24px;padding:28px 24px;box-shadow:0 20px 50px rgba(90,50,20,.22);transform:scale(.85);transition:.35s cubic-bezier(.34,1.56,.64,1)}
+.progress-overlay.show .progress-card{transform:scale(1)}
+.progress-card h3{font-family:'Fredoka',sans-serif;font-size:20px;margin:0 0 16px;text-align:center;color:#3a2a1f}
+.progress-list{list-style:none;padding:0;margin:0}
+.progress-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;margin-bottom:8px;background:rgba(240,122,46,0.06);border:1px solid rgba(240,122,46,0.15)}
+.progress-item .num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;background:rgba(240,122,46,0.15);color:#f07a2e}
+.progress-item .q-text{flex:1;font-family:'Fredoka',sans-serif;font-size:14px;font-weight:500;color:#3a2a1f}
+.progress-item .status{font-size:18px;flex-shrink:0}
+.progress-item.correct{background:rgba(46,158,74,0.1);border-color:rgba(46,158,74,0.25)}
+.progress-item.correct .num{background:rgba(46,158,74,0.15);color:#2e9e4a}
+.progress-item.wrong{background:rgba(224,90,90,0.1);border-color:rgba(224,90,90,0.2)}
+.progress-item.wrong .num{background:rgba(224,90,90,0.15);color:#e05a5a}
+.progress-close{display:block;margin:16px auto 0;font-family:'Fredoka',sans-serif;font-weight:600;font-size:15px;padding:10px 28px;border-radius:999px;border:none;background:linear-gradient(135deg,var(--peach),var(--peach-deep));color:#fff;cursor:pointer;box-shadow:0 6px 16px rgba(240,122,46,0.3);transition:transform .14s ease}
+.progress-close:hover{transform:translateY(-2px)}
+
+.result-overlay{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(58,42,31,0.4);backdrop-filter:blur(8px);opacity:0;visibility:hidden;transition:.3s}
+.result-overlay.show{opacity:1;visibility:visible}
+.result-card{max-width:480px;width:100%;text-align:center;background:rgba(255,247,239,0.96);border:2px solid var(--edge);backdrop-filter:blur(18px);border-radius:30px;padding:40px 30px;box-shadow:0 30px 60px rgba(90,50,20,.22);transform:scale(.8);transition:.35s cubic-bezier(.34,1.56,.64,1)}
+.result-overlay.show .result-card{transform:scale(1)}
+.result-badge{width:100px;height:100px;border-radius:50%;margin:0 auto 16px;font-size:50px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#fff6c8,#f5c542 60%,#e8a317);box-shadow:0 0 30px rgba(245,197,66,.35);animation:badgePop .55s cubic-bezier(.34,1.56,.64,1)}
+@keyframes badgePop{0%{transform:scale(0) rotate(-30deg)}70%{transform:scale(1.12) rotate(6deg)}100%{transform:scale(1) rotate(0)}}
+.result-card h2{font-family:'Fredoka',sans-serif;font-size:clamp(22px,4vw,30px);margin:0 0 14px;color:var(--ink)}
+.result-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:22px}
+.rstat{background:rgba(240,122,46,0.08);border:1px solid var(--edge);border-radius:14px;padding:14px 8px}
+.rstat b{display:block;font-family:'Fredoka',sans-serif;font-size:22px;color:var(--peach-deep)}
+.rstat span{font-size:10.5px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:1px;font-weight:800}
+.result-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.btn{border:none;cursor:pointer;font-family:'Fredoka',sans-serif;font-weight:600;font-size:15px;padding:14px 24px;border-radius:999px;transition:transform .14s ease,box-shadow .14s ease}
+.btn:active{transform:translateY(1px) scale(.98)}
+.btn-primary{background:linear-gradient(135deg,var(--peach),var(--peach-deep));color:#fff;box-shadow:0 8px 20px rgba(240,122,46,0.3)}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-ghost{background:rgba(240,122,46,0.08);color:var(--ink-soft);border:2px solid var(--edge)}
+.btn-ghost:hover{border-color:var(--peach-deep);color:var(--ink)}
 </style>
 </head>
 <body>
@@ -214,6 +253,7 @@ body{
     <div class="hud-chip">⭐ <span id="sD">0</span></div>
     <div class="hud-chip">🔥 <span id="cD">x0</span></div>
     <div class="hud-chip" id="qCountDisplay">Q 1/5</div>
+    <button class="progress-btn" id="progressBtn" title="Answer Progress">📋<span class="badge" id="progressBadge">0</span></button>
   </div>
   <div class="side"><button class="sound-toggle" id="soundToggle">🔊</button></div>
 </div>
@@ -224,7 +264,7 @@ body{
 </div>
 
 <div class="stage-wrap" id="stageWrap">
-  <div class="instruction" id="instEl">Smash the correct stone!</div>
+  <div class="instruction" id="instEl" style="display:none"></div>
 
   <div class="stones" id="stonesEl">
     <div class="stone true" id="stoneT" role="button" tabindex="0" aria-label="True">
@@ -323,6 +363,31 @@ body{
   <button class="pa" id="pA" type="button">🔄 Play Again</button>
 </div></div>
 
+<div class="progress-overlay" id="progressOverlay">
+  <div class="progress-card">
+    <h3>📋 Answer Progress</h3>
+    <ul class="progress-list" id="progressList"></ul>
+    <button class="progress-close" id="progressClose">Got it!</button>
+  </div>
+</div>
+
+<div class="result-overlay" id="resultOverlay">
+  <div class="result-card">
+    <div class="result-badge" id="resultBadge">🏆</div>
+    <h2 id="resultTitle">Great Job!</h2>
+    <div class="result-stats">
+      <div class="rstat"><b id="resultScore">0</b><span>Score</span></div>
+      <div class="rstat"><b id="resultCorrect">0/5</b><span>Correct</span></div>
+      <div class="rstat"><b id="resultCombo">x0</b><span>Best Combo</span></div>
+      <div class="rstat"><b id="resultStars">⭐⭐⭐</b><span>Rating</span></div>
+    </div>
+    <div class="result-actions">
+      <button class="btn btn-ghost" id="resultReplayBtn">🔁 Play Again</button>
+      <button class="btn btn-primary" id="resultMenuBtn">🗺️ Menu</button>
+    </div>
+  </div>
+</div>
+
 <script>
 (function(){
   var quiz=[
@@ -334,6 +399,7 @@ body{
   ];
 
   var cQ=0,score=0,combo=0,wrongs=0,locked=false,sndOn=true;
+  var questionResults=[];
   var qS=document.getElementById("qS"),sD=document.getElementById("sD"),cD=document.getElementById("cD");
   var qD=document.getElementById("qCountDisplay"),fb=document.getElementById("fb");
   var fE=document.getElementById("fE"),fT=document.getElementById("fT"),fX=document.getElementById("fX");
@@ -478,12 +544,16 @@ body{
           combo++;score+=12+combo*3;sD.textContent=score;cD.textContent="x"+combo;
           pC();conf(28);
           hero.classList.remove("cheer");void hero.offsetWidth;hero.classList.add("cheer");
+          questionResults[cQ]="correct";
+          updateProgressBadge();
           sFB("ok","🎉","Correct!","Awesome smash!");
           spk("Correct!");
           if(combo>=2){pB();showBn("COMBO x"+combo+"!")}
           setTimeout(function(){fb.classList.remove("show");cQ++;loadQ()},1400);
         }else{
           combo=0;cD.textContent="x0";wrongs++;
+          questionResults[cQ]="wrong";
+          updateProgressBadge();
           pW();
           sFB("no","😅","Oops!","Try the other stone!");
           spk("Try again!");
@@ -518,13 +588,20 @@ body{
   }
 
   function showFin(){
+    var correct=quiz.length-wrongs;
+    var pct=correct/quiz.length;
     var em,ti;
     if(wrongs===0){em="🌟";ti="PERFECT!";pF();spk("Perfect!")}
     else if(wrongs<=2){em="🏆";ti="Great Job!";spk("Great job!")}
-    else{em="💪";ti="Keep Trying!";spk("Keep trying")}
+    else{em="🌟";ti="Nice Work!";spk("Nice work!")}
+    document.getElementById('resultBadge').textContent=em;
+    document.getElementById('resultTitle').textContent=ti;
+    document.getElementById('resultScore').textContent=score;
+    document.getElementById('resultCorrect').textContent=correct+'/'+quiz.length;
+    document.getElementById('resultCombo').textContent='x'+combo;
+    document.getElementById('resultStars').textContent=pct===1?'⭐⭐⭐':pct>=0.6?'⭐⭐☆':'⭐☆☆';
     setTimeout(function(){
-      sFB("fn",em,ti,"Score: "+score);
-      pA.style.display="inline-block";
+      document.getElementById('resultOverlay').classList.add('show');
       conf(55);setTimeout(function(){conf(30)},300);
     },400);
   }
@@ -540,9 +617,53 @@ body{
     sD.textContent="0";cD.textContent="x0";
     setTimeout(loadQ,300);
   });
+  document.getElementById('resultReplayBtn').addEventListener('click',function(){
+    document.getElementById('resultOverlay').classList.remove('show');
+    cQ=0;score=0;combo=0;wrongs=0;locked=false;
+    sD.textContent="0";cD.textContent="x0";
+    questionResults=[];
+    setTimeout(loadQ,300);
+  });
+  document.getElementById('resultMenuBtn').addEventListener('click',function(){
+    window.location.href='../EVS_Index.html';
+  });
   sndB.addEventListener("click",function(){
     sndOn=!sndOn;sndB.textContent=sndOn?"🔊":"🔇";
     if(!sndOn&&"speechSynthesis" in window)speechSynthesis.cancel();
+  });
+
+  function updateProgressBadge(){
+    var count=0;
+    for(var i=0;i<questionResults.length;i++){if(questionResults[i]==="correct")count++}
+    document.getElementById('progressBadge').textContent=count;
+  }
+
+  function renderProgressList(){
+    var list=document.getElementById('progressList');
+    list.innerHTML='';
+    quiz.forEach(function(q,i){
+      var li=document.createElement('li');
+      var result=questionResults[i];
+      var status='○';
+      var cls='';
+      var displayText='???';
+      if(result==='correct'){status='✓';cls='correct';displayText=q.s+' → '+(q.a?'TRUE':'FALSE')}
+      else if(result==='wrong'){status='✗';cls='wrong';displayText=q.s+' → '+(q.a?'TRUE':'FALSE')}
+      li.className='progress-item'+(cls?' '+cls:'');
+      li.innerHTML='<span class="num">'+(i+1)+'</span><span class="q-text">'+displayText+'</span><span class="status">'+status+'</span>';
+      list.appendChild(li);
+    });
+  }
+
+  document.getElementById('progressBtn').addEventListener('click',function(){
+    renderProgressList();
+    document.getElementById('progressOverlay').classList.add('show');
+  });
+  document.getElementById('progressClose').addEventListener('click',function(){
+    document.getElementById('progressOverlay').classList.remove('show');
+  });
+  document.getElementById('progressOverlay').addEventListener('click',function(e){
+    if(e.target===e.currentTarget)document.getElementById('progressOverlay').classList.remove('show');
   });
 
   loadQ();

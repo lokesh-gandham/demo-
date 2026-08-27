@@ -241,7 +241,7 @@
     .card-gold .game-badge{background:linear-gradient(135deg,#f5b820,#e09a00);color:#3a2800}
 
     .card-title{
-      min-height:56px;display:flex;flex-direction:column;justify-content:center;
+      min-height:56px;display:flex;flex-direction:column;justify-content:center;text-align:center;
       font-family:'Fredoka',sans-serif;font-size:clamp(22px,2.2vw,30px);line-height:1.05;font-weight:600;
       text-transform:uppercase;color:var(--ink);position:relative;z-index:1;padding-right:42px;
     }
@@ -271,10 +271,12 @@
     .description{
       margin-top:6px;padding:0 4px;
       font-size:clamp(14px,1.3vw,16px);line-height:1.35;font-weight:600;color:var(--ink-soft);position:relative;z-index:1;
+      text-align:center;
     }
     .mechanic{
       margin:8px 0 12px;font-size:11px;font-weight:600;letter-spacing:.4px;
       text-transform:uppercase;position:relative;z-index:1;
+      text-align:center;
     }
     .card-mint .mechanic{color:#2fa854}
     .card-peach .mechanic{color:#d96620}
@@ -370,7 +372,7 @@
           <h2 class="card-title">CHOOSE<strong>OPTIONS</strong></h2>
           <div class="card-image-wrap"><img class="card-image" src="./assets/images/choose-options1.png" alt="Choose Options"></div>
           <p class="description">Tap the correct floating answer to score.</p>
-          <div class="mechanic">9 options · body quiz</div>
+          <div class="mechanic">smashing · body quiz</div>
           <button class="play play-mint" onclick="openGame('./exercises/mcq.html')">▶&nbsp; Play</button>
         </article>
 
@@ -378,17 +380,17 @@
           <span class="game-badge">Word Catch</span>
           <h2 class="card-title">FILL IN<strong>THE BLANKS</strong></h2>
           <div class="card-image-wrap"><img class="card-image" src="./assets/images/fill-blanks.png" alt="Fill in the Blanks"></div>
-          <p class="description">Catch the falling word that completes the sentence.</p>
+          <p class="description">Catch the correct word that fills the blank.</p>
           <div class="mechanic">cloud catch · fill blanks</div>
-          <button class="play play-peach" onclick="openGame('./exercises/true.html')">▶&nbsp; Play</button>
+          <button class="play play-peach" onclick="openGame('./body-catch-game.html')">▶&nbsp; Play</button>
         </article>
 
         <article class="game-card card-pink">
           <span class="game-badge">Gate Dash</span>
           <h2 class="card-title">TRUE OR<strong>FALSE</strong></h2>
           <div class="card-image-wrap"><img class="card-image" src="./assets/images/true-false.png" alt="True or False"></div>
-          <p class="description">Dash through the correct True or False gate.</p>
-          <div class="mechanic">gate run · judge fast</div>
+          <p class="description">Pick true or false for each statement to score.</p>
+          <div class="mechanic">stone smash · true false</div>
           <button class="play play-pink" onclick="openGame('./exercises/truefalse.html')">▶&nbsp; Play</button>
         </article>
 

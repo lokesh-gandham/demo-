@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Planet Adventure — Explore. Discover. Play.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg-deep:#04051a; --bg-deep-2:#090c2b;
@@ -24,7 +24,7 @@ body{
     radial-gradient(ellipse 900px 900px at 50% 110%, rgba(94,234,212,0.09), transparent 55%),
     linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-deep-2) 100%);
 }
-h1,h2,h3,h4,.display{font-family:'Baloo 2',sans-serif;}
+h1,h2,h3,h4,.display{font-family:'Fredoka',sans-serif;}
 button{font-family:inherit;}
 img{max-width:100%; display:block;}
 ::selection{background:var(--gold); color:#1a1200;}
@@ -73,7 +73,7 @@ canvas#fxCanvas{position:fixed; inset:0; width:100%; height:100%; pointer-events
 .rocket-stop-card{ background:var(--panel); border:1px solid var(--edge); backdrop-filter:blur(16px); border-radius:26px;
   padding:32px 26px; text-align:center; max-width:640px; margin:0 auto; }
 .rocket-planet-display{ width:140px; height:140px; margin:0 auto 18px; }
-.rocket-question{ font-family:'Baloo 2',sans-serif; font-size:clamp(17px,2.6vw,21px); margin-bottom:22px; line-height:1.4; }
+.rocket-question{ font-family:'Fredoka',sans-serif; font-size:clamp(17px,2.6vw,21px); margin-bottom:22px; line-height:1.4; }
 .blast-options{ display:grid; gap:12px; max-width:440px; margin:0 auto; }
 .blast-btn{ display:flex; align-items:center; gap:12px; border:2px solid var(--edge); border-radius:14px; padding:15px 18px;
   background:rgba(255,255,255,0.04); color:var(--ink); font-weight:800; font-size:15px; cursor:pointer; transition:all .15s ease; text-align:left; }
@@ -149,7 +149,7 @@ p.hero-subtitle{ font-size:clamp(15px,2.4vw,19px); color:var(--ink-dim); margin:
 .gc-body{ padding:18px 20px 22px; }
 .gc-body h3{ margin:0 0 6px; font-size:19px; }
 .gc-body p{ margin:0 0 14px; color:var(--ink-dim); font-size:13.5px; font-weight:700; line-height:1.4; }
-.gc-play{ display:inline-flex; align-items:center; gap:8px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:14px; color:var(--gold-2); }
+.gc-play{ display:inline-flex; align-items:center; gap:8px; font-family:'Fredoka',sans-serif; font-weight:700; font-size:14px; color:var(--gold-2); }
 .crosshair-mini{ position:absolute; width:44px; height:44px; border:2px solid rgba(255,159,214,0.6); border-radius:50%; }
 .crosshair-mini::before,.crosshair-mini::after{ content:""; position:absolute; background:rgba(255,159,214,0.6);}
 .crosshair-mini::before{ left:50%; top:-8px; width:2px; height:8px; transform:translateX(-50%);}
@@ -157,7 +157,7 @@ p.hero-subtitle{ font-size:clamp(15px,2.4vw,19px); color:var(--ink-dim); margin:
 
 .menu-utility{ max-width:1080px; margin:8px auto 0; padding:0 20px; display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
 .util-btn{ background:var(--panel); border:1px solid var(--edge); color:var(--ink); padding:12px 22px; border-radius:999px; cursor:pointer;
-  font-family:'Baloo 2',sans-serif; font-weight:700; font-size:14px; display:flex; align-items:center; gap:8px;}
+  font-family:'Fredoka',sans-serif; font-weight:700; font-size:14px; display:flex; align-items:center; gap:8px;}
 .util-btn:hover{ border-color:var(--gold-2); color:var(--gold-2); }
 
 /* ---------- shared game wrap ---------- */
@@ -168,7 +168,7 @@ p.hero-subtitle{ font-size:clamp(15px,2.4vw,19px); color:var(--ink-dim); margin:
 
 /* ---------- combo / toast banners ---------- */
 .float-banner{ position:fixed; top:84px; left:50%; transform:translateX(-50%) translateY(-16px); z-index:700;
-  font-family:'Baloo 2',sans-serif; font-weight:800; padding:12px 26px; border-radius:999px; opacity:0; pointer-events:none;
+  font-family:'Fredoka',sans-serif; font-weight:800; padding:12px 26px; border-radius:999px; opacity:0; pointer-events:none;
   transition:all .3s cubic-bezier(.34,1.56,.64,1); font-size:16px; white-space:nowrap;}
 .float-banner.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 .float-banner.combo{ background:linear-gradient(135deg, var(--gold), var(--pink)); color:#1a1200; box-shadow:0 12px 30px rgba(255,159,214,.35);}
@@ -182,7 +182,7 @@ p.hero-subtitle{ font-size:clamp(15px,2.4vw,19px); color:var(--ink-dim); margin:
 .shoot-planet-badge{ position:absolute; top:16px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:10px;
   background:rgba(0,0,0,0.3); padding:8px 16px; border-radius:999px; font-weight:800; font-size:12px; letter-spacing:.5px; z-index:5;}
 .shoot-question{ position:absolute; top:64px; left:50%; transform:translateX(-50%); width:90%; text-align:center;
-  font-family:'Baloo 2',sans-serif; font-size:clamp(16px,2.6vw,20px); z-index:5; line-height:1.35;}
+  font-family:'Fredoka',sans-serif; font-size:clamp(16px,2.6vw,20px); z-index:5; line-height:1.35;}
 .target-btn{ position:absolute; border:2px solid var(--edge); border-radius:16px; padding:12px 18px; background:rgba(255,255,255,0.05);
   color:var(--ink); font-weight:800; font-size:14px; cursor:pointer; transition:transform .15s ease, border-color .15s ease, background .15s ease;
   animation:targetDrift 4.5s ease-in-out infinite; max-width:180px;}
@@ -198,10 +198,10 @@ p.hero-subtitle{ font-size:clamp(15px,2.4vw,19px); color:var(--ink-dim); margin:
 /* ---------- PLANET SMASH ---------- */
 .smash-stage-wrap{ position:relative; border-radius:24px; overflow:hidden; background:var(--panel); border:1px solid var(--edge); }
 #smashCanvas{ display:block; width:100%; height:440px; touch-action:none; cursor:crosshair; }
-.smash-timer{ position:absolute; top:14px; right:16px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:20px;
+.smash-timer{ position:absolute; top:14px; right:16px; font-family:'Fredoka',sans-serif; font-weight:800; font-size:20px;
   background:rgba(0,0,0,0.35); padding:6px 16px; border-radius:999px; z-index:5;}
 #gunCanvas{ cursor:none; }
-.gun-accuracy{ position:absolute; top:14px; left:16px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:13px;
+.gun-accuracy{ position:absolute; top:14px; left:16px; font-family:'Fredoka',sans-serif; font-weight:800; font-size:13px;
   background:rgba(0,0,0,0.35); padding:6px 14px; border-radius:999px; z-index:5;}
 
 /* ---------- MATCH THE PLANETS ---------- */
@@ -234,13 +234,13 @@ p.hero-subtitle{ font-size:clamp(15px,2.4vw,19px); color:var(--ink-dim); margin:
 .result-card h2{ font-size:clamp(24px,4vw,30px); margin:0 0 18px;}
 .result-stats-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:20px; }
 .rstat{ background:rgba(255,255,255,0.04); border:1px solid var(--edge); border-radius:14px; padding:14px 8px;}
-.rstat b{ display:block; font-family:'Baloo 2',sans-serif; font-size:22px; color:var(--gold-2);}
+.rstat b{ display:block; font-family:'Fredoka',sans-serif; font-size:22px; color:var(--gold-2);}
 .rstat span{ font-size:10.5px; color:var(--ink-dim-2); text-transform:uppercase; letter-spacing:1px; font-weight:800;}
 .level-progress-wrap{ margin-bottom:22px; text-align:left; }
 .level-progress-label{ display:flex; justify-content:space-between; font-size:12px; font-weight:800; color:var(--ink-dim); margin-bottom:6px; }
 .result-actions{ display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
 
-.btn{ border:none; cursor:pointer; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:15px; padding:14px 24px; border-radius:999px;
+.btn{ border:none; cursor:pointer; font-family:'Fredoka',sans-serif; font-weight:700; font-size:15px; padding:14px 24px; border-radius:999px;
   transition:transform .14s ease, box-shadow .14s ease; }
 .btn:active{ transform:translateY(1px) scale(.98); }
 .btn-primary{ background:linear-gradient(135deg, var(--gold), var(--gold-2)); color:#1a1200; box-shadow:0 10px 26px rgba(255,200,87,0.3); }
