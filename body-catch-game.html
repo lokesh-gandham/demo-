@@ -79,35 +79,13 @@
 
   .word{
     position:absolute;
-    font-family:'Fredoka',sans-serif;
-    font-weight:400;
-    font-size:clamp(26px,4vw,36px);
-    padding:22px 36px 18px;
-    border-radius:50% 50% 50% 50% / 55% 55% 45% 45%;
-    border:none;
-    white-space:nowrap;
+    top:0; left:0;
+    pointer-events:none;
     user-select:none;
     will-change:transform;
-    text-shadow:0 1px 2px rgba(0,0,0,0.08);
-    color:#3a2a1f;
-    letter-spacing:0.5px;
-    filter:drop-shadow(0 4px 8px rgba(0,0,0,0.22));
+    filter:drop-shadow(2px 3px 0 rgba(45,48,71,0.35));
   }
-  .word::after{
-    content:'';
-    position:absolute;
-    bottom:-8px;
-    left:50%;
-    transform:translateX(-50%);
-    width:0; height:0;
-    border-left:8px solid transparent;
-    border-right:8px solid transparent;
-    border-top:10px solid var(--navy);
-  }
-  .word.opt-a{ background:radial-gradient(ellipse at 35% 30%,#c8f5ef,#5cc4b0); }
-  .word.opt-b{ background:radial-gradient(ellipse at 35% 30%,#fff3b8,#f5c842); }
-  .word.opt-c{ background:radial-gradient(ellipse at 35% 30%,#e8ddf8,#9b82d8); }
-  .word.opt-d{ background:radial-gradient(ellipse at 35% 30%,#ffdbdb,#f07070); }
+  .word svg{ display:block; }
 
   @keyframes balloonBob{
     0%,100%{ transform:translateY(0) rotate(-1.5deg) }
@@ -411,13 +389,86 @@ function showBanner(text){
   setTimeout(function(){el.classList.remove('show')},1800);
 }
 
+const BALLOON_COLORS = ['#B8ECE6','#FFE9A8','#D8CCF0','#FFC9C9','#C9F2C0'];
+
+function shadeColor(hex, percent){
+  const f = parseInt(hex.slice(1), 16);
+  const t = percent < 0 ? 0 : 255;
+  const p = Math.abs(percent);
+  const R = f >> 16, G = (f >> 8) & 0x00FF, B = f & 0x0000FF;
+  const newR = Math.round((t - R) * p) + R;
+  const newG = Math.round((t - G) * p) + G;
+  const newB = Math.round((t - B) * p) + B;
+  return "#" + (0x1000000 + newR * 0x10000 + newG * 0x100 + newB).toString(16).slice(1);
+}
+
+let balloonUid = 0;
+
+function makeBalloonSVG(text, colorIdx){
+  const fill = BALLOON_COLORS[colorIdx % BALLOON_COLORS.length];
+  const light = shadeColor(fill, 0.45);
+  const dark = shadeColor(fill, -0.18);
+  const uid = 'b' + (balloonUid++);
+
+  const charW = 9.6;
+  const rx = Math.max(38, Math.round(text.length * charW / 2) + 15);
+  const ry = Math.round(rx * 1.14);
+  const pad = 5;
+  const cx = rx + pad, cy = ry + pad;
+  const bodyH = ry * 2 + pad * 2;
+  const bodyW = rx * 2 + pad * 2;
+  const knotH = 12;
+  const stringH = 24;
+  const totalH = bodyH + knotH + stringH;
+
+  const neckY = cy + ry * 0.92;
+  const neckHalf = rx * 0.16;
+  const knotTopY = bodyH - 6;
+
+  const path = `M ${cx} ${cy - ry}
+    C ${cx + rx * 1.04} ${cy - ry}, ${cx + rx} ${cy - ry * 0.25}, ${cx + rx} ${cy + ry * 0.12}
+    C ${cx + rx} ${cy + ry * 0.62}, ${cx + rx * 0.55} ${neckY}, ${cx + neckHalf} ${bodyH - pad}
+    L ${cx - neckHalf} ${bodyH - pad}
+    C ${cx - rx * 0.55} ${neckY}, ${cx - rx} ${cy + ry * 0.62}, ${cx - rx} ${cy + ry * 0.12}
+    C ${cx - rx} ${cy - ry * 0.25}, ${cx - rx * 1.04} ${cy - ry}, ${cx} ${cy - ry}
+    Z`;
+
+  const svg = `<svg width="${bodyW}" height="${totalH}" viewBox="0 0 ${bodyW} ${totalH}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="grad-${uid}" cx="34%" cy="28%" r="78%">
+        <stop offset="0%" stop-color="${light}"/>
+        <stop offset="60%" stop-color="${fill}"/>
+        <stop offset="100%" stop-color="${dark}"/>
+      </radialGradient>
+      <filter id="blur-${uid}" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="1.6"/>
+      </filter>
+    </defs>
+    <path d="M ${cx} ${knotTopY + 10} Q ${cx + 8} ${knotTopY + 17}, ${cx} ${knotTopY + 24}" stroke="#2D3047" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <circle cx="${cx}" cy="${knotTopY + 24}" r="2.1" fill="#2D3047"/>
+    <path d="${path}" fill="url(#grad-${uid})" stroke="#2D3047" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M ${cx - rx * 0.5} ${neckY - ry * 0.14} Q ${cx} ${neckY + ry * 0.02} ${cx + rx * 0.5} ${neckY - ry * 0.14}"
+          stroke="${dark}" stroke-width="2.2" fill="none" opacity="0.5" stroke-linecap="round"/>
+    <polygon points="${cx - 6},${knotTopY} ${cx + 6},${knotTopY} ${cx},${knotTopY + 9}"
+             fill="${dark}" stroke="#2D3047" stroke-width="2.5" stroke-linejoin="round"/>
+    <ellipse cx="${cx - rx * 0.36}" cy="${cy - ry * 0.48}" rx="${rx * 0.16}" ry="${ry * 0.34}"
+             fill="white" opacity="0.65" filter="url(#blur-${uid})"
+             transform="rotate(-24 ${cx - rx * 0.36} ${cy - ry * 0.48})"/>
+    <ellipse cx="${cx - rx * 0.18}" cy="${cy - ry * 0.7}" rx="${rx * 0.07}" ry="${ry * 0.12}"
+             fill="white" opacity="0.8" filter="url(#blur-${uid})"/>
+    <text x="${cx}" y="${cy + 6}" text-anchor="middle" font-family="'Fredoka', sans-serif" font-weight="500" font-size="16" fill="#2D3047">${escapeXml(text)}</text>
+  </svg>`;
+
+  return { svg, bodyW, totalH, hitHeight: bodyH + knotH };
+}
+
+function escapeXml(str){
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
 function clearWords(){
   state.words.forEach(w => w.el.remove());
   state.words = [];
-}
-
-function classForIndex(i){
-  return ['opt-a','opt-b','opt-c','opt-d'][i % 4];
 }
 
 function spawnWord(){
@@ -434,18 +485,23 @@ function spawnWord(){
   const candidates = pool.filter(p => !existingTexts.includes(p.text));
   const chosen = (candidates.length ? candidates : pool)[Math.floor(Math.random()*(candidates.length? candidates.length : pool.length))];
 
+  const colorIdx = Math.floor(Math.random()*BALLOON_COLORS.length);
+  const { svg, bodyW, totalH, hitHeight } = makeBalloonSVG(chosen.text, colorIdx);
+
   const el = document.createElement('div');
-  el.className = 'word ' + classForIndex(Math.floor(Math.random()*4));
-  el.textContent = chosen.text;
+  el.className = 'word';
+  el.style.width = bodyW + 'px';
+  el.style.height = totalH + 'px';
+  el.innerHTML = svg;
   gameArea.appendChild(el);
 
-  const wordWidth = el.offsetWidth || 90;
-  const x = Math.max(6, Math.min(areaW - wordWidth - 6, Math.random()*(areaW - wordWidth - 12) + 6));
-
+  const x = Math.max(6, Math.min(areaW - bodyW - 6, Math.random()*(areaW - bodyW - 12) + 6));
   const speedJitter = 0.85 + Math.random()*0.5;
+
   state.words.push({
     el, text: chosen.text, correct: chosen.correct,
-    x, y: -40,
+    x, y: -totalH,
+    width: bodyW, hitHeight,
     speed: state.fallSpeedBase * speedJitter,
     caught: false
   });
@@ -619,8 +675,8 @@ function tick(ts){
     wObj.y += wObj.speed * (dt/16.7) * 2;
     wObj.el.style.transform = `translate(${wObj.x}px, ${wObj.y}px)`;
 
-    const wWidth = wObj.el.offsetWidth;
-    const wBottom = wObj.y + wObj.el.offsetHeight;
+    const wWidth = wObj.width || wObj.el.offsetWidth;
+    const wBottom = wObj.y + (wObj.hitHeight || wObj.el.offsetHeight);
     const wLeft = wObj.x;
     const wRight = wObj.x + wWidth;
 
