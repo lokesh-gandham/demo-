@@ -184,6 +184,9 @@ canvas#fxCanvas{position:fixed; inset:0; width:100%; height:100%; pointer-events
 .progress-item.correct .num{ background:rgba(46,158,74,0.15); color:var(--success); }
 .progress-item.wrong{ background:rgba(224,90,90,0.1); border-color:rgba(224,90,90,0.2); }
 .progress-item.wrong .num{ background:rgba(224,90,90,0.15); color:var(--error); }
+.progress-item .answer-word{ color:var(--peach-deep); font-weight:700; text-decoration:underline; text-decoration-color:rgba(240,122,46,0.4); text-underline-offset:3px; }
+.progress-item.correct .answer-word{ color:var(--success); text-decoration-color:rgba(46,158,74,0.4); }
+.progress-item.wrong .answer-word{ color:var(--error); text-decoration-color:rgba(224,90,90,0.4); }
 .progress-close{ display:block; margin:16px auto 0; font-family:'Fredoka',sans-serif; font-weight:600; font-size:15px; padding:10px 28px; border-radius:999px; border:none; background:linear-gradient(135deg, var(--peach), var(--peach-deep)); color:#fff; cursor:pointer; box-shadow:0 6px 16px rgba(240,122,46,0.3); transition:transform .14s ease; }
 .progress-close:hover{ transform:translateY(-2px); }
 </style>
@@ -844,14 +847,14 @@ function renderProgressList(){
       cls = 'correct';
       const answerIndex = q.answer.charCodeAt(0) - 65;
       const answerText = q.options[answerIndex] ? q.options[answerIndex].text : q.answer;
-      displayText = q.question.replace('______', answerText);
+      displayText = q.question.replace('______', '<span class="answer-word">' + answerText + '</span>');
     }
     else if(result === 'wrong'){
       status = '✗';
       cls = 'wrong';
       const answerIndex = q.answer.charCodeAt(0) - 65;
       const answerText = q.options[answerIndex] ? q.options[answerIndex].text : q.answer;
-      displayText = q.question.replace('______', answerText);
+      displayText = q.question.replace('______', '<span class="answer-word">' + answerText + '</span>');
     }
     li.className = 'progress-item' + (cls ? ' ' + cls : '');
     li.innerHTML = '<span class="num">' + (i+1) + '</span><span class="q-text">' + displayText + '</span><span class="status">' + status + '</span>';
