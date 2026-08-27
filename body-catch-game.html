@@ -410,8 +410,8 @@ function makeBalloonSVG(text, colorIdx){
   const dark = shadeColor(fill, -0.18);
   const uid = 'b' + (balloonUid++);
 
-  const charW = 9.6;
-  const rx = Math.max(38, Math.round(text.length * charW / 2) + 15);
+  const charW = 11;
+  const rx = Math.max(44, Math.round(text.length * charW / 2) + 18);
   const ry = Math.round(rx * 1.14);
   const pad = 5;
   const cx = rx + pad, cy = ry + pad;
@@ -456,7 +456,7 @@ function makeBalloonSVG(text, colorIdx){
              transform="rotate(-24 ${cx - rx * 0.36} ${cy - ry * 0.48})"/>
     <ellipse cx="${cx - rx * 0.18}" cy="${cy - ry * 0.7}" rx="${rx * 0.07}" ry="${ry * 0.12}"
              fill="white" opacity="0.8" filter="url(#blur-${uid})"/>
-    <text x="${cx}" y="${cy + 6}" text-anchor="middle" font-family="'Fredoka', sans-serif" font-weight="500" font-size="16" fill="#2D3047">${escapeXml(text)}</text>
+    <text x="${cx}" y="${cy + 6}" text-anchor="middle" font-family="'Fredoka', sans-serif" font-weight="500" font-size="20" fill="#2D3047">${escapeXml(text)}</text>
   </svg>`;
 
   return { svg, bodyW, totalH, hitHeight: bodyH + knotH };
