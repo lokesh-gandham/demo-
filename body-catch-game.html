@@ -82,8 +82,6 @@
     top:0; left:0;
     pointer-events:none;
     user-select:none;
-    will-change:transform;
-    filter:drop-shadow(2px 3px 0 rgba(45,48,71,0.35));
   }
   .word svg{ display:block; }
 
@@ -456,7 +454,7 @@ function makeBalloonSVG(text, colorIdx){
              transform="rotate(-24 ${cx - rx * 0.36} ${cy - ry * 0.48})"/>
     <ellipse cx="${cx - rx * 0.18}" cy="${cy - ry * 0.7}" rx="${rx * 0.07}" ry="${ry * 0.12}"
              fill="white" opacity="0.8" filter="url(#blur-${uid})"/>
-    <text x="${cx}" y="${cy + 6}" text-anchor="middle" font-family="'Fredoka', sans-serif" font-weight="500" font-size="20" fill="#2D3047">${escapeXml(text)}</text>
+    <text x="${cx}" y="${cy + 6}" text-anchor="middle" font-family="'Fredoka', sans-serif" font-weight="500" font-size="20" fill="#2D3047" text-rendering="geometricPrecision">${escapeXml(text)}</text>
   </svg>`;
 
   return { svg, bodyW, totalH, hitHeight: bodyH + knotH };
