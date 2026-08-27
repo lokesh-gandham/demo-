@@ -35,7 +35,9 @@
   .hud .side{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .hud-back{background:var(--panel);border:2px solid var(--edge);color:var(--ink);padding:7px 15px;border-radius:999px;cursor:pointer;font-weight:800;font-size:13px;text-decoration:none}
   .hud-back:hover{border-color:var(--peach-deep);color:var(--peach-deep);background:#fff}
-  .hud-chip{background:var(--panel);border:2px solid var(--edge);border-radius:999px;padding:7px 14px;font-weight:800;font-size:13px;display:flex;align-items:center;gap:6px;color:var(--ink)}
+   .hud-chip{background:var(--panel);border:2px solid var(--edge);border-radius:999px;padding:7px 14px;font-weight:800;font-size:13px;display:flex;align-items:center;gap:6px;color:var(--ink)}
+   .timer-chip.warn{color:#e74c3c;border-color:#e74c3c;animation:pulse 1s infinite}
+   @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
   .sound-toggle{background:var(--panel);border:2px solid var(--edge);color:var(--ink);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:15px}
 
   /* Question Bar */
@@ -227,6 +229,7 @@
   <div class="side"><a class="hud-back" href="./EVS_Index.html">← Menu</a></div>
   <div class="side">
     <div class="hud-chip" id="levelChip">Round 1 / 5</div>
+    <div class="hud-chip timer-chip" id="timerChip">⏱️ 2:00</div>
     <div class="hud-chip">⭐ <span id="scoreChip">0</span></div>
     <div class="hud-chip">🔥 <span id="comboChip">x0</span></div>
     <button class="progress-btn" id="progressBtn" title="Answer Progress">📋<span class="badge" id="progressBadge">0</span></button>
@@ -360,7 +363,9 @@ let state = {
   spawnInterval: 1400,
   fallSpeedBase: 1.15,
   lastTime: 0,
-  questionResults: []
+  questionResults: [],
+  timerRemaining: 120,
+  timerInterval: null
 };
 
 function areaSize(){
@@ -569,11 +574,17 @@ function pickPraise(){
 
 function winGame(){
   state.running = false;
+  stopTimer();
   basketEl.classList.remove('visible');
   clearWords();
   var pct = state.qIndex / questions.length;
+  var elapsed = 120 - state.timerRemaining;
+  var em = Math.floor(elapsed / 60);
+  var es = elapsed % 60;
+  var timeStr = em + ':' + (es < 10 ? '0' : '') + es;
   document.getElementById('resultBadge').textContent = '🌟';
   document.getElementById('resultTitle').textContent = "Perfect run! You're a Body Expert!";
+  document.getElementById('resultTitle').style.color = '';
   document.getElementById('resultScore').textContent = state.score;
   document.getElementById('resultCorrect').textContent = state.qIndex + '/' + questions.length;
   document.getElementById('resultCombo').textContent = 'x' + state.bestCombo;
@@ -590,6 +601,51 @@ document.getElementById('soundToggle').addEventListener('click',function(){
   if(!sndOn&&'speechSynthesis' in window)speechSynthesis.cancel();
 });
 
+function renderTimer(){
+  var el = document.getElementById('timerChip');
+  var m = Math.floor(state.timerRemaining / 60);
+  var s = state.timerRemaining % 60;
+  el.textContent = '⏱️ ' + m + ':' + (s < 10 ? '0' : '') + s;
+  if(state.timerRemaining <= 30){ el.classList.add('warn'); } else { el.classList.remove('warn'); }
+}
+
+function startTimer(){
+  stopTimer();
+  state.timerRemaining = 120;
+  renderTimer();
+  state.timerInterval = setInterval(function(){
+    state.timerRemaining--;
+    renderTimer();
+    if(state.timerRemaining <= 0){
+      stopTimer();
+      state.running = false;
+      showTimeUp();
+    }
+  }, 1000);
+}
+
+function stopTimer(){
+  if(state.timerInterval){ clearInterval(state.timerInterval); state.timerInterval = null; }
+}
+
+function showTimeUp(){
+  var overlay = document.getElementById('resultOverlay');
+  var correct = state.questionResults.filter(function(r){return r==='correct'}).length;
+  var elapsed = 120 - state.timerRemaining;
+  var em = Math.floor(elapsed / 60);
+  var es = elapsed % 60;
+  var timeStr = em + ':' + (es < 10 ? '0' : '') + es;
+  overlay.querySelector('.result-badge').textContent = '⏰';
+  overlay.querySelector('.result-card h2').textContent = "Time's Up!";
+  overlay.querySelector('.result-card h2').style.color = '#e74c3c';
+  var stats = overlay.querySelector('.result-stats');
+  stats.innerHTML = '<div class="rstat"><b>' + correct + '/' + questions.length + '</b><span>Questions</span></div>'
+    + '<div class="rstat"><b>' + state.score + '</b><span>Score</span></div>'
+    + '<div class="rstat"><b>x' + state.bestCombo + '</b><span>Best Combo</span></div>'
+    + '<div class="rstat"><b>' + timeStr + '</b><span>Time Used</span></div>';
+  overlay.classList.add('show');
+}
+
 function resetGame(){
   state.qIndex = 0;
   state.score = 0;
@@ -605,6 +661,7 @@ function resetGame(){
   state.basketX = w/2 - 46;
   state.targetX = state.basketX;
   positionBasket();
+  startTimer();
 }
 
 function positionBasket(){
@@ -733,11 +790,12 @@ function renderProgressList(){
     const result = state.questionResults[i];
     let status = '○';
     let cls = '';
-    let displayText = '???';
-    if(result === 'correct'){ status = '✓'; cls = 'correct'; displayText = q.answer; }
-    else if(result === 'wrong'){ status = '✗'; cls = 'wrong'; displayText = q.answer; }
+    const punct = q.suffixPunct || '';
+    const sentence = (q.pre + ' ______ ' + q.post + punct).replace(/\s+/g,' ').trim();
+    if(result === 'correct'){ status = '✓'; cls = 'correct'; }
+    else if(result === 'wrong'){ status = '✗'; cls = 'wrong'; }
     li.className = 'progress-item' + (cls ? ' ' + cls : '');
-    li.innerHTML = '<span class="num">' + (i+1) + '</span><span class="q-text">' + displayText + '</span><span class="status">' + status + '</span>';
+    li.innerHTML = '<span class="num">' + (i+1) + '</span><span class="q-text">' + sentence + '</span><span class="status">' + status + '</span>';
     list.appendChild(li);
   });
 }
